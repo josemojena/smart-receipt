@@ -1,135 +1,450 @@
-# Turborepo starter
+# Smart Receipt
 
-This Turborepo starter is maintained by the Turborepo core team.
+A comprehensive monorepo for Smart Receipt - An intelligent expense tracking and receipt management system with OCR capabilities.
 
-## Using this example
+## 🏗️ Architecture
 
-Run the following command:
+This is a **Turborepo** monorepo containing multiple applications and shared packages:
 
-```sh
-npx create-turbo@latest
-```
+- **Backend API** - Node.js/TypeScript API server
+- **CLI Tool** - Command-line interface for receipt processing
+- **Web App** - Remix.js web application
+- **Mobile App** - Flutter app for Android and iOS
 
-## What's inside?
-
-This Turborepo includes the following packages/apps:
-
-### Apps and Packages
-
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
-
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
-
-### Utilities
-
-This Turborepo has some additional tools already setup for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-
-### Build
-
-To build all apps and packages, run the following command:
+## 📦 Project Structure
 
 ```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build
-yarn dlx turbo build
-pnpm exec turbo build
+smart-receipt/
+├── apps/
+│   ├── api/              # Backend API (Node.js/TypeScript)
+│   ├── cli/              # CLI tool for receipt processing
+│   ├── mobile/           # Flutter mobile app (Android/iOS)
+│   └── web/              # Web app (Remix.js)
+├── packages/
+│   ├── core/             # Business logic and repositories
+│   ├── database/         # Prisma ORM with MongoDB
+│   ├── eslint-config/    # Shared ESLint configurations
+│   ├── typescript-config/# Shared TypeScript configurations
+│   └── ui/               # Shared UI components
+├── docker/                # Docker configurations
+│   └── mongo/            # MongoDB setup with replica set
+└── docker-compose.yml    # Docker Compose configuration
 ```
 
-You can build a specific package by using a [filter](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters):
+## 🚀 Quick Start
 
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build --filter=docs
+### Prerequisites
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build --filter=docs
-yarn exec turbo build --filter=docs
-pnpm exec turbo build --filter=docs
-```
+- **Node.js** >= 18
+- **pnpm** 9.0.0 (package manager)
+- **Flutter SDK** (for mobile app)
+- **Docker** (for local MongoDB)
+- **Melos** (for Flutter monorepo management)
+  ```bash
+  dart pub global activate melos
+  ```
 
-### Develop
+### Installation
 
-To develop all apps and packages, run the following command:
+1. **Clone the repository:**
+   ```bash
+   git clone <repository-url>
+   cd smart-receipt
+   ```
 
-```
-cd my-turborepo
+2. **Install dependencies:**
+   ```bash
+   pnpm install
+   ```
 
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev
+3. **Setup MongoDB with Docker:**
+   ```bash
+   docker-compose up -d
+   ```
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev
-yarn exec turbo dev
-pnpm exec turbo dev
-```
+4. **Setup Database:**
+   ```bash
+   cd packages/database
+   pnpm db:generate
+   pnpm db:push
+   ```
 
-You can develop a specific package by using a [filter](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters):
+5. **Setup Flutter (for mobile app):**
+   ```bash
+   cd apps/mobile
+   flutter pub get
+   ```
 
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev --filter=web
+## 📱 Applications
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev --filter=web
-yarn exec turbo dev --filter=web
-pnpm exec turbo dev --filter=web
-```
+### API (`apps/api`)
 
-### Remote Caching
+Backend API server built with Node.js and TypeScript.
 
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
+**Tech Stack:**
+- Node.js
+- TypeScript
+- Express (or similar framework)
 
-Turborepo can use a technique known as [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
-
-```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo login
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo login
-yarn exec turbo login
-pnpm exec turbo login
-```
-
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo link
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo link
-yarn exec turbo link
-pnpm exec turbo link
+**Development:**
+```bash
+cd apps/api
+pnpm dev
 ```
 
-## Useful Links
+### CLI (`apps/cli`)
 
-Learn more about the power of Turborepo:
+Command-line tool for processing receipts with OCR capabilities using Gemini AI.
 
-- [Tasks](https://turborepo.com/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.com/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.com/docs/reference/configuration)
-- [CLI Usage](https://turborepo.com/docs/reference/command-line-reference)
+**Tech Stack:**
+- TypeScript
+- Gemini AI for OCR
+- Image processing
+
+**Usage:**
+```bash
+cd apps/cli
+pnpm dev
+```
+
+### Web App (`apps/web`)
+
+Full-stack web application built with Remix.js.
+
+**Tech Stack:**
+- Remix.js
+- React 18
+- Tailwind CSS
+- TypeScript
+- Vite
+
+**Development:**
+```bash
+cd apps/web
+pnpm dev
+# Runs on http://localhost:3002
+```
+
+### Mobile App (`apps/mobile`)
+
+Flutter mobile application for Android and iOS.
+
+**Tech Stack:**
+- Flutter
+- BLoC for state management
+- Freezed for immutable models
+- JSON Serializable
+- Build Runner for code generation
+- Very Good Analysis for linting
+
+**Development:**
+```bash
+# From root
+pnpm mobile:dev
+
+# Or directly
+cd apps/mobile
+flutter run
+```
+
+**Platforms:**
+- ✅ Android
+- ✅ iOS
+- ❌ macOS (not supported)
+- ❌ Web (not supported)
+
+## 📚 Packages
+
+### `@repo/database`
+
+Prisma ORM package with MongoDB. Contains database schema and models.
+
+**Features:**
+- Embedded composite types (ReceiptData, ReceiptItem)
+- Type-safe database access
+- Seed scripts
+
+**Usage:**
+```typescript
+import { prisma } from '@repo/database';
+
+const receipts = await prisma.receipt.findMany();
+```
+
+**Scripts:**
+```bash
+cd packages/database
+pnpm db:generate    # Generate Prisma Client
+pnpm db:push        # Push schema to database
+pnpm db:studio      # Open Prisma Studio
+pnpm db:seed        # Run seed script
+```
+
+### `@repo/core`
+
+Business logic package containing repositories and shared services.
+
+**Structure:**
+```
+src/
+├── modules/          # Feature modules
+│   └── receipts/
+│       └── repositories/
+│           └── receipts.ts
+└── shared/           # Shared utilities (auth, etc.)
+```
+
+**Usage:**
+```typescript
+import { ReceiptsRepository } from '@repo/core';
+
+const receiptsRepo = new ReceiptsRepository();
+const receipts = await receiptsRepo.findAll({ userId: 'user123' });
+```
+
+### `@repo/ui`
+
+Shared React UI components library.
+
+**Usage:**
+```typescript
+import { Button, Card } from '@repo/ui';
+```
+
+### `@repo/eslint-config`
+
+Shared ESLint configurations for the monorepo.
+
+### `@repo/typescript-config`
+
+Shared TypeScript configurations for the monorepo.
+
+## 🐳 Docker Setup
+
+MongoDB with replica set support for local development.
+
+**Start services:**
+```bash
+docker-compose up -d
+```
+
+**Services:**
+- **MongoDB**: `localhost:27017` (replica set: rs0)
+- **Mongo Express**: `http://localhost:8081` (UI for MongoDB)
+
+**Connection String:**
+```
+mongodb://localhost:27017/smart-receipt?replicaSet=rs0
+```
+
+See [docker/README.md](./docker/README.md) for more details.
+
+## 🛠️ Available Scripts
+
+### General Commands
+
+```bash
+# Build all apps and packages
+pnpm build
+
+# Run all apps in development mode
+pnpm dev
+
+# Lint all packages
+pnpm lint
+
+# Type check all packages
+pnpm check-types
+
+# Format code
+pnpm format
+```
+
+### Mobile App Commands
+
+```bash
+# Development
+pnpm mobile:dev              # Run on device/emulator
+
+# Builds
+pnpm mobile:build:android    # Build Android APK
+pnpm mobile:build:ios        # Build iOS
+
+# Code Generation
+pnpm mobile:build:runner     # Generate code (Freezed, JSON, etc.)
+pnpm mobile:watch:runner     # Watch mode for code generation
+
+# Testing & Analysis
+pnpm mobile:test             # Run tests
+pnpm mobile:analyze          # Analyze code
+```
+
+### Melos Commands (Flutter)
+
+```bash
+# From apps/mobile directory
+melos get                    # Install dependencies
+melos analyze                # Analyze code
+melos test                   # Run tests
+melos clean                  # Clean build files
+melos format                 # Format code
+melos build:runner           # Generate code
+melos watch:runner           # Watch and generate code
+
+# Or from root
+pnpm melos:get
+pnpm melos:analyze
+pnpm melos:test
+pnpm melos:clean
+pnpm melos:format
+pnpm melos:build:runner
+pnpm melos:watch:runner
+```
+
+## 🗄️ Database
+
+### Schema
+
+The database uses **MongoDB** with **Prisma ORM** and **embedded composite types**:
+
+- **Receipt** - Main receipt model
+  - `id`, `userId`, `documentHash`, `uploadedAt`, `aiModel`
+  - `data` (embedded ReceiptData)
+    - `store`, `transactionId`, `date`, `time`, `finalTotal`
+    - `taxBreakdown` (JSON)
+    - `items[]` (embedded ReceiptItem[])
+      - `originalName`, `normalizedName`, `category`, etc.
+
+### Setup
+
+1. **Start MongoDB:**
+   ```bash
+   docker-compose up -d
+   ```
+
+2. **Generate Prisma Client:**
+   ```bash
+   cd packages/database
+   pnpm db:generate
+   ```
+
+3. **Push schema to database:**
+   ```bash
+   pnpm db:push
+   ```
+
+4. **Seed database (optional):**
+   ```bash
+   pnpm db:seed
+   ```
+
+## 🧩 Tech Stack
+
+### Backend
+- **Node.js** + **TypeScript**
+- **Prisma ORM** with **MongoDB**
+- **Express** (or similar)
+
+### Frontend Web
+- **Remix.js** - Full-stack React framework
+- **React 18**
+- **Tailwind CSS**
+- **TypeScript**
+
+### Mobile
+- **Flutter** - Cross-platform mobile framework
+- **BLoC** - State management
+- **Freezed** - Immutable classes
+- **JSON Serializable** - JSON serialization
+- **Build Runner** - Code generation
+- **Very Good Analysis** - Enhanced linting
+
+### DevOps
+- **Turborepo** - Monorepo build system
+- **Melos** - Flutter/Dart monorepo management
+- **Docker** - Containerization
+- **pnpm** - Package manager
+
+## 📖 Documentation
+
+Each app and package has its own README:
+
+- [API README](./apps/api/README.md)
+- [CLI README](./apps/cli/README.md)
+- [Web README](./apps/web/README.md)
+- [Mobile README](./apps/mobile/README.md)
+- [Database README](./packages/database/README.md)
+- [Core README](./packages/core/README.md)
+- [Docker README](./docker/README.md)
+
+## 🔧 Development Workflow
+
+### Adding a New Feature
+
+1. **Create models** in `packages/database/prisma/schema.prisma`
+2. **Generate Prisma Client**: `cd packages/database && pnpm db:generate`
+3. **Create repository** in `packages/core/src/modules/`
+4. **Implement API endpoint** in `apps/api/`
+5. **Create UI** in `apps/web/` or `apps/mobile/`
+6. **Test** across all affected apps
+
+### Code Generation (Flutter)
+
+When working with Flutter models:
+
+```bash
+# After creating Freezed models, generate code
+pnpm mobile:build:runner
+
+# Or use watch mode during development
+pnpm mobile:watch:runner
+```
+
+## 🧪 Testing
+
+```bash
+# Run all tests
+pnpm test
+
+# Test specific app
+cd apps/api && pnpm test
+cd apps/mobile && flutter test
+```
+
+## 📝 Code Style
+
+- **TypeScript/JavaScript**: ESLint + Prettier
+- **Flutter/Dart**: Very Good Analysis + Dart Format
+- **Format on save** recommended
+
+## 🚢 Deployment
+
+### Web App
+- Deploy to Vercel, Netlify, or similar
+- Uses Remix.js build output
+
+### Mobile App
+- **Android**: Build APK or App Bundle
+- **iOS**: Build via Xcode or CI/CD
+
+### API
+- Deploy to any Node.js hosting (Vercel, Railway, etc.)
+
+## 🤝 Contributing
+
+1. Create a feature branch
+2. Make your changes
+3. Run tests and linting
+4. Submit a pull request
+
+## 📄 License
+
+[Add your license here]
+
+## 🔗 Useful Links
+
+- [Turborepo Documentation](https://turborepo.org/docs)
+- [Prisma Documentation](https://www.prisma.io/docs)
+- [Flutter Documentation](https://docs.flutter.dev/)
+- [Remix Documentation](https://remix.run/docs)
+- [Melos Documentation](https://melos.invertase.dev/)
