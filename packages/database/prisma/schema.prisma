@@ -1,0 +1,45 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "mongodb"
+    url      = env("DATABASE_URL")
+}
+
+type ReceiptItem {
+    originalName   String @map("original_name")
+    normalizedName String @map("normalized_name")
+    category       String
+    quantity       Float
+    unitOfMeasure  String @map("unit_of_measure")
+    baseQuantity   Float  @map("base_quantity")
+    baseUnitName   String @map("base_unit_name")
+    paidPrice      Float  @map("paid_price")
+    realUnitPrice  Float  @map("real_unit_price")
+}
+
+type ReceiptData {
+    store         String
+    transactionId String        @map("transaction_id")
+    date          String
+    time          String
+    finalTotal    Float         @map("final_total")
+    taxBreakdown  Json          @map("tax_breakdown")
+    items         ReceiptItem[]
+}
+
+model Receipt {
+    id           String       @id @default(auto()) @map("_id") @db.ObjectId
+    userId       String       @map("user_id")
+    documentHash String       @unique @map("document_hash")
+    uploadedAt   DateTime     @default(now()) @map("uploaded_at")
+    aiModel      String       @map("ai_model")
+    data         ReceiptData?
+
+    @@index([userId])
+    @@map("receipts")
+}

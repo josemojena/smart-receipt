@@ -1,36 +1,56 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/create-next-app).
+# Web App (Remix.js)
 
-## Getting Started
+Smart Receipt web application built with Remix.js and integrated with Turborepo.
 
-First, run the development server:
+## Tech Stack
+
+- **Remix.js** - Full-stack React framework
+- **Vite** - Build tool and dev server
+- **TypeScript** - Type safety
+- **Tailwind CSS** - Styling
+- **Turborepo** - Monorepo integration
+
+## Development
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+# Start dev server (runs on port 3002)
 pnpm dev
-# or
-bun dev
+
+# Build for production
+pnpm build
+
+# Start production server
+pnpm start
+
+# Type check
+pnpm check-types
+
+# Lint
+pnpm lint
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Project Structure
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+app/
+  ├── routes/          # Route files (file-based routing)
+  ├── entry.client.tsx # Client entry point
+  ├── entry.server.tsx # Server entry point
+  └── root.tsx         # Root layout component
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load Inter, a custom Google Font.
+## Integration
 
-## Learn More
+This app is integrated with:
+- `@repo/core` - Business logic
+- `@repo/database` - Database access
+- `@repo/ui` - Shared UI components
 
-To learn more about Next.js, take a look at the following resources:
+## Environment Variables
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Create a `.env` file with:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```env
+DATABASE_URL="mongodb://localhost:27017/smart-receipt?replicaSet=rs0"
+```
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.

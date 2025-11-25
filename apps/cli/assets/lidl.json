@@ -1,0 +1,134 @@
+{
+    "store": "LIDL",
+    "transaction_id": "005521596",
+    "date": "2025-11-24",
+    "time": "12:25",
+    "final_total": 21.29,
+    "tax_breakdown": {
+        "4%": 0.32,
+        "10%": 1.19
+    },
+    "items": [
+        {
+            "original_name": "ASSORTIMENT BROU",
+            "normalized_name": "Surtido Caldo",
+            "category": "Despensa",
+            "quantity": 1.0,
+            "unit_of_measure": "ud",
+            "base_quantity": 1.0,
+            "base_unit_name": "ud",
+            "paid_price": 2.15,
+            "real_unit_price": 2.15
+        },
+        {
+            "original_name": "GOT ARRÒS BASMATI",
+            "normalized_name": "Vaso Arroz Basmati",
+            "category": "Despensa",
+            "quantity": 3.0,
+            "unit_of_measure": "ud",
+            "base_quantity": 3.0,
+            "base_unit_name": "ud",
+            "paid_price": 3.27,
+            "real_unit_price": 1.09
+        },
+        {
+            "original_name": "PEBRE VERMELL",
+            "normalized_name": "Pimiento Rojo",
+            "category": "Alimentación Fresca",
+            "quantity": 1.0,
+            "unit_of_measure": "ud",
+            "base_quantity": 1.0,
+            "base_unit_name": "ud",
+            "paid_price": 1.79,
+            "real_unit_price": 1.79
+        },
+        {
+            "original_name": "BACÓ FUMAT",
+            "normalized_name": "Bacon Ahumado",
+            "category": "Alimentación Fresca",
+            "quantity": 1.0,
+            "unit_of_measure": "ud",
+            "base_quantity": 1.0,
+            "base_unit_name": "ud",
+            "paid_price": 2.89,
+            "real_unit_price": 2.89
+        },
+        {
+            "original_name": "XORIÇO OREJAT",
+            "normalized_name": "Chorizo Oreado",
+            "category": "Alimentación Fresca",
+            "quantity": 0.434,
+            "unit_of_measure": "kg",
+            "base_quantity": 434.0,
+            "base_unit_name": "g",
+            "paid_price": 2.90,
+            "real_unit_price": 6.69
+        },
+        {
+            "original_name": "Desc.",
+            "normalized_name": "Descuento",
+            "category": "Otros",
+            "quantity": 1.0,
+            "unit_of_measure": "ud",
+            "base_quantity": 1.0,
+            "base_unit_name": "ud",
+            "paid_price": -0.04,
+            "real_unit_price": -0.04
+        },
+        {
+            "original_name": "FILETS D'ARENGA",
+            "normalized_name": "Filetes de Arenque",
+            "category": "Alimentación Fresca",
+            "quantity": 1.0,
+            "unit_of_measure": "ud",
+            "base_quantity": 1.0,
+            "base_unit_name": "ud",
+            "paid_price": 2.29,
+            "real_unit_price": 2.29
+        },
+        {
+            "original_name": "ALL GRANULAT",
+            "normalized_name": "Ajo Granulado",
+            "category": "Despensa",
+            "quantity": 1.0,
+            "unit_of_measure": "ud",
+            "base_quantity": 1.0,
+            "base_unit_name": "ud",
+            "paid_price": 0.69,
+            "real_unit_price": 0.69
+        },
+        {
+            "original_name": "LLET EVAPORADA",
+            "normalized_name": "Leche Evaporada",
+            "category": "Despensa",
+            "quantity": 2.0,
+            "unit_of_measure": "ud",
+            "base_quantity": 2.0,
+            "base_unit_name": "ud",
+            "paid_price": 2.70,
+            "real_unit_price": 1.35
+        },
+        {
+            "original_name": "CEBA VERMELLA",
+            "normalized_name": "Cebolla Roja",
+            "category": "Alimentación Fresca",
+            "quantity": 1.0,
+            "unit_of_measure": "ud",
+            "base_quantity": 1.0,
+            "base_unit_name": "ud",
+            "paid_price": 1.39,
+            "real_unit_price": 1.39
+        },
+        {
+            "original_name": "PATATA GRANEL",
+            "normalized_name": "Patata a Granel",
+            "category": "Alimentación Fresca",
+            "quantity": 0.668,
+            "unit_of_measure": "kg",
+            "base_quantity": 668.0,
+            "base_unit_name": "g",
+            "paid_price": 1.26,
+            "real_unit_price": 1.89
+        }
+    ]
+}

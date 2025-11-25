@@ -1,0 +1,45 @@
+name: smart_receipt_mobile
+repository: https://github.com/your-org/smart-receipt
+
+packages:
+  - "."
+
+command:
+  bootstrap:
+    runPubGetInParallel: true
+    runPubUpgrade: false
+
+  version:
+    changelog: true
+    conventionalCommits: true
+    updateDependents: true
+    updateDependentsOnBreakingChanges: true
+
+scripts:
+  get:
+    description: Install dependencies
+    run: flutter pub get
+
+  analyze:
+    description: Analyze code
+    run: flutter analyze
+
+  test:
+    description: Run tests
+    run: flutter test
+
+  clean:
+    description: Clean build files
+    run: flutter clean
+
+  format:
+    description: Format code
+    run: dart format .
+
+  build:runner:
+    description: Generate code using build_runner (one-time build)
+    run: flutter pub run build_runner build --delete-conflicting-outputs
+
+  watch:runner:
+    description: Watch for changes and generate code using build_runner
+    run: flutter pub run build_runner watch --delete-conflicting-outputs
