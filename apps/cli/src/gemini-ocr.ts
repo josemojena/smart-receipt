@@ -4,23 +4,25 @@ import fs from 'fs';
 import { GEMINI_SYSTEM_PROMPT } from './config/gemini-prompts';
 import { GEMINI_JOIN_TICKETS_PROMPT } from './config/gemini-join-tickets';
 
-const genAI = new GoogleGenerativeAI(
-  process.env.GEMINI_API_KEY || 'REPLACED_API_KEY'
-);
+if (!process.env.GEMINI_API_KEY) {
+  throw new Error('GEMINI_API_KEY environment variable is required');
+}
+
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 // Función para convertir imagen a base64
 const fileToGenerativePart = (filePath: string, mimeType: string) => {
-    return {
-      inlineData: {
+  return {
+    inlineData: {
       data: Buffer.from(fs.readFileSync(filePath)).toString('base64'),
       mimeType,
-      },
-    };
+    },
+  };
 };
 export const extractTextFromImage = async (imagePath: string) => {
-    // Usar el modelo Gemini Pro Vision o Gemini 1.5
+  // Usar el modelo Gemini Pro Vision o Gemini 1.5
   const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
-  
+
   const imagePart = fileToGenerativePart(imagePath, 'image/jpeg');
 
   const result = await model.generateContent([GEMINI_SYSTEM_PROMPT, imagePart]);
@@ -47,12 +49,12 @@ export const extractTextFromMultipleImages = async (
 
   // Crear el contenido: prompt de unión + todas las imágenes
   const content = [GEMINI_JOIN_TICKETS_PROMPT, GEMINI_SYSTEM_PROMPT, ...imageParts];
-  
+
   const result = await model.generateContent(content);
-    const response = await result.response;
-    const text = response.text();
-    
-    return text;
+  const response = await result.response;
+  const text = response.text();
+
+  return text;
 };
 
 // Ejemplo de uso con una sola imagen
