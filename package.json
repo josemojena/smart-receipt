@@ -1,5 +1,5 @@
 {
-  "name": "my-turborepo",
+  "name": "smart-receipt",
   "private": true,
   "scripts": {
     "build": "turbo run build",
