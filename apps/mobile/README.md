@@ -2,6 +2,18 @@
 
 Flutter mobile application for Smart Receipt - Expense tracking and receipt management for Android and iOS.
 
+## 🏗️ Architecture
+
+This app follows a **Feature-Based Modular Architecture** using the **BLoC pattern** for state management.
+
+**Key Concepts:**
+- ✅ **Features**: Self-contained modules (dashboard, ticket_detail, etc.)
+- ✅ **BLoC**: State management for each feature
+- ✅ **Shared Code**: Models and widgets used across features
+- ✅ **Clean Separation**: UI, business logic, and data are clearly separated
+
+📖 **[See full architecture documentation →](#architecture)**
+
 ## Platforms
 
 - ✅ Android
@@ -222,41 +234,124 @@ melos watch:runner
 pnpm mobile:watch:runner
 ```
 
-### Freezed Usage
+### Freezed Usage for Models
 
-Create immutable models with code generation:
+All data models in `lib/shared/models/` use **Freezed** for code generation. This provides:
+- ✅ Immutable classes with `copyWith` method
+- ✅ Automatic `toString`, `==`, and `hashCode` implementations
+- ✅ JSON serialization/deserialization
+- ✅ Union types support (optional)
+
+#### Example: Product Model
 
 ```dart
-// lib/models/receipt.dart
+// lib/shared/models/product.dart
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-part 'receipt.freezed.dart';
-part 'receipt.g.dart';
+part 'product.freezed.dart';
+part 'product.g.dart';
 
 @freezed
-class Receipt with _$Receipt {
-  const factory Receipt({
-    required String id,
-    required String userId,
-    required String documentHash,
-    required DateTime uploadedAt,
-    required String aiModel,
-    ReceiptData? data,
-  }) = _Receipt;
+class Product with _$Product {
+  const factory Product({
+    required String name,
+    @JsonKey(name: 'unit_price') required double unitPrice,
+    required int quantity,
+  }) = _Product;
 
-  factory Receipt.fromJson(Map<String, dynamic> json) =>
-      _$ReceiptFromJson(json);
+  factory Product.fromJson(Map<String, dynamic> json) =>
+      _$ProductFromJson(json);
+}
+
+// Extension for computed properties
+extension ProductExtension on Product {
+  double get totalPrice => unitPrice * quantity;
 }
 ```
 
-Then run:
+#### Example: Ticket Model
+
+```dart
+// lib/shared/models/ticket.dart
+import 'package:freezed_annotation/freezed_annotation.dart';
+import 'product.dart';
+
+part 'ticket.freezed.dart';
+part 'ticket.g.dart';
+
+@freezed
+class Ticket with _$Ticket {
+  const factory Ticket({
+    required int id,
+    @JsonKey(name: 'store_name') required String storeName,
+    required DateTime date,
+    @Default(<Product>[]) List<Product> products,
+  }) = _Ticket;
+
+  factory Ticket.fromJson(Map<String, dynamic> json) =>
+      _$TicketFromJson(json);
+}
+
+// Extension for computed properties
+extension TicketExtension on Ticket {
+  double get totalSpent =>
+      products.fold(0.0, (sum, item) => sum + item.totalPrice);
+  int get totalItems => products.length;
+}
+```
+
+#### Generating Code
+
+After creating or modifying a model, run:
+
 ```bash
+# One-time generation
+flutter pub run build_runner build --delete-conflicting-outputs
+
+# Or using Melos
 melos build:runner
+
+# Or from root
+pnpm mobile:build:runner
 ```
 
 This generates:
-- `receipt.freezed.dart` - Immutable class with `copyWith`, equality, etc.
-- `receipt.g.dart` - JSON serialization methods
+- `*.freezed.dart` - Immutable class with `copyWith`, equality, etc.
+- `*.g.dart` - JSON serialization methods (`fromJson`, `toJson`)
+
+#### Using Generated Models
+
+```dart
+// Create instances
+const product = Product(
+  name: 'Leche',
+  unitPrice: 1.25,
+  quantity: 2,
+);
+
+// Use copyWith to create modified copies
+final updatedProduct = product.copyWith(quantity: 3);
+
+// JSON serialization
+final json = product.toJson();
+final fromJson = Product.fromJson(json);
+
+// Use extension methods
+final total = product.totalPrice; // 1.25 * 2 = 2.50
+```
+
+#### Watch Mode (Auto-generate)
+
+For development, use watch mode to auto-generate on file changes:
+
+```bash
+flutter pub run build_runner watch --delete-conflicting-outputs
+
+# Or using Melos
+melos watch:runner
+```
+
+**Note:** The generated files (`.freezed.dart` and `.g.dart`) should **never** be edited manually. They are automatically generated and will be overwritten.
 
 ### JSON Serializable Usage
 
@@ -320,46 +415,169 @@ Configure app flavors (dev/staging/prod):
 flutter pub run flutter_flavorizr
 ```
 
-## BLoC Usage
+## BLoC Usage (Feature-Based)
 
-### Basic BLoC Structure
+### Example: Dashboard Feature BLoC
+
+This example shows the actual structure used in the Dashboard feature:
+
+#### Events (`dashboard_event.dart`)
 
 ```dart
-// lib/bloc/counter/counter_event.dart
-abstract class CounterEvent {}
+import 'package:equatable/equatable.dart';
 
-class Increment extends CounterEvent {}
-class Decrement extends CounterEvent {}
-
-// lib/bloc/counter/counter_state.dart
-class CounterState {
-  final int count;
-  CounterState(this.count);
+abstract class DashboardEvent extends Equatable {
+  const DashboardEvent();
+  @override
+  List<Object> get props => [];
 }
 
-// lib/bloc/counter/counter_bloc.dart
-import 'package:bloc/bloc.dart';
+class DashboardLoadTickets extends DashboardEvent {
+  const DashboardLoadTickets();
+}
 
-class CounterBloc extends Bloc<CounterEvent, CounterState> {
-  CounterBloc() : super(CounterState(0)) {
-    on<Increment>((event, emit) => emit(CounterState(state.count + 1)));
-    on<Decrement>((event, emit) => emit(CounterState(state.count - 1)));
+class DashboardScanTicket extends DashboardEvent {
+  const DashboardScanTicket();
+}
+```
+
+#### States (`dashboard_state.dart`)
+
+```dart
+import 'package:equatable/equatable.dart';
+import '../../../shared/models/models.dart';
+
+abstract class DashboardState extends Equatable {
+  const DashboardState();
+  @override
+  List<Object> get props => [];
+}
+
+class DashboardInitial extends DashboardState {
+  const DashboardInitial();
+}
+
+class DashboardLoading extends DashboardState {
+  const DashboardLoading();
+}
+
+class DashboardLoaded extends DashboardState {
+  final List<Ticket> tickets;
+  final double totalSpent;
+
+  const DashboardLoaded({
+    required this.tickets,
+    required this.totalSpent,
+  });
+
+  @override
+  List<Object> get props => [tickets, totalSpent];
+}
+
+class DashboardError extends DashboardState {
+  final String message;
+  const DashboardError(this.message);
+  @override
+  List<Object> get props => [message];
+}
+```
+
+#### BLoC (`dashboard_bloc.dart`)
+
+```dart
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'dashboard_event.dart';
+import 'dashboard_state.dart';
+
+class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
+  DashboardBloc() : super(const DashboardInitial()) {
+    on<DashboardLoadTickets>(_onLoadTickets);
+    on<DashboardScanTicket>(_onScanTicket);
+  }
+
+  Future<void> _onLoadTickets(
+    DashboardLoadTickets event,
+    Emitter<DashboardState> emit,
+  ) async {
+    emit(const DashboardLoading());
+    // Load data...
+    emit(DashboardLoaded(tickets: tickets, totalSpent: total));
+  }
+
+  Future<void> _onScanTicket(
+    DashboardScanTicket event,
+    Emitter<DashboardState> emit,
+  ) async {
+    // Handle scan action
   }
 }
 ```
 
-### Using BLoC in Widgets
+### Using BLoC in Feature Screens
 
 ```dart
-import 'package:flutter_bloc/flutter_bloc.dart';
+// In dashboard_screen.dart
+class DashboardScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => DashboardBloc()..add(const DashboardLoadTickets()),
+      child: Scaffold(
+        body: BlocBuilder<DashboardBloc, DashboardState>(
+          builder: (context, state) {
+            if (state is DashboardLoading) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (state is DashboardError) {
+              return Center(child: Text('Error: ${state.message}'));
+            }
+            if (state is DashboardLoaded) {
+              return TicketList(tickets: state.tickets);
+            }
+            return const SizedBox.shrink();
+          },
+        ),
+      ),
+    );
+  }
+}
+```
 
-BlocProvider(
-  create: (context) => CounterBloc(),
-  child: BlocBuilder<CounterBloc, CounterState>(
-    builder: (context, state) {
-      return Text('Count: ${state.count}');
-    },
-  ),
+### Dispatching Events
+
+```dart
+// From UI, dispatch events
+context.read<DashboardBloc>().add(const DashboardLoadTickets());
+
+// Or using BlocProvider.of
+BlocProvider.of<DashboardBloc>(context).add(const DashboardScanTicket());
+```
+
+### Listening to State Changes (Side Effects)
+
+```dart
+// Use BlocListener for navigation, snackbars, dialogs, etc.
+BlocListener<TicketDetailBloc, TicketDetailState>(
+  listener: (context, state) {
+    if (state is TicketDetailDeleted) {
+      Navigator.pop(context);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Ticket eliminado.')),
+      );
+    }
+  },
+  child: YourWidget(),
+)
+
+// Combine BlocListener and BlocBuilder
+BlocConsumer<DashboardBloc, DashboardState>(
+  listener: (context, state) {
+    // Handle side effects
+  },
+  builder: (context, state) {
+    // Build UI
+    return YourWidget();
+  },
 )
 ```
 
@@ -368,36 +586,268 @@ BlocProvider(
 ```dart
 import 'package:bloc_test/bloc_test.dart';
 
-blocTest<CounterBloc, CounterState>(
-  'emits [1] when Increment is added',
-  build: () => CounterBloc(),
-  act: (bloc) => bloc.add(Increment()),
-  expect: () => [CounterState(1)],
+blocTest<DashboardBloc, DashboardState>(
+  'emits [Loading, Loaded] when LoadTickets is added',
+  build: () => DashboardBloc(),
+  act: (bloc) => bloc.add(const DashboardLoadTickets()),
+  expect: () => [
+    const DashboardLoading(),
+    isA<DashboardLoaded>(),
+  ],
 );
 ```
 
-## Project Structure
+## Architecture
+
+This app follows a **Feature-Based Modular Architecture** using the **BLoC pattern** for state management. The architecture is designed for scalability, maintainability, and testability.
+
+### Architecture Overview
+
+The app is organized into **features** (modules), where each feature is self-contained with its own:
+- **BLoC** (Business Logic Component) for state management
+- **UI Screens** and **Widgets**
+- **Events** and **States** for the BLoC pattern
+
+Shared code (models, widgets, utilities) is placed in the `shared/` directory.
+
+### Project Structure
 
 ```
 lib/
-  ├── main.dart              # App entry point
-  ├── app/                   # App configuration
-  │   └── app.dart
-  ├── bloc/                  # BLoC state management
-  │   ├── counter/
-  │   │   ├── counter_bloc.dart
-  │   │   ├── counter_event.dart
-  │   │   └── counter_state.dart
-  │   └── ...
-  ├── screens/               # Screen widgets
-  │   ├── home/
-  │   └── receipts/
-  ├── widgets/               # Reusable widgets
-  ├── models/                # Data models
-  ├── services/              # Business logic and API calls
-  ├── repositories/          # Data repositories
-  └── utils/                  # Utilities and helpers
+├── main.dart                    # App entry point (clean and minimal)
+│
+├── features/                    # Feature modules (self-contained)
+│   ├── dashboard/               # Dashboard/Home feature
+│   │   ├── bloc/                # BLoC state management
+│   │   │   ├── dashboard_bloc.dart
+│   │   │   ├── dashboard_event.dart
+│   │   │   └── dashboard_state.dart
+│   │   ├── widgets/             # Feature-specific widgets
+│   │   │   ├── dashboard_summary_cards.dart
+│   │   │   ├── dashboard_scan_button.dart
+│   │   │   └── dashboard_ticket_list.dart
+│   │   └── dashboard_screen.dart # Main screen
+│   │
+│   └── ticket_detail/           # Ticket Detail feature
+│       ├── bloc/
+│       │   ├── ticket_detail_bloc.dart
+│       │   ├── ticket_detail_event.dart
+│       │   └── ticket_detail_state.dart
+│       ├── widgets/
+│       │   └── ticket_product_item.dart
+│       └── ticket_detail_screen.dart
+│
+└── shared/                      # Shared code across features
+    ├── models/                  # Data models (using Freezed)
+    │   ├── product.dart         # Model definition
+    │   ├── product.freezed.dart # Generated (immutable class)
+    │   ├── product.g.dart      # Generated (JSON serialization)
+    │   ├── ticket.dart
+    │   ├── ticket.freezed.dart # Generated
+    │   ├── ticket.g.dart       # Generated
+    │   └── models.dart          # Barrel export
+    │
+    └── widgets/                  # Reusable widgets
+        └── bottom_nav_bar.dart
 ```
+
+**Note:** Models use **Freezed** for code generation. After modifying models, run `melos build:runner` to regenerate `.freezed.dart` and `.g.dart` files.
+
+### Architecture Principles
+
+#### 1. Feature-Based Organization
+
+Each feature is a **self-contained module** that includes:
+- **BLoC**: State management logic
+- **Events**: User actions and system events
+- **States**: UI state representations
+- **Screens**: Main feature screens
+- **Widgets**: Feature-specific UI components
+
+**Benefits:**
+- ✅ Easy to locate code related to a specific feature
+- ✅ Features can be developed independently
+- ✅ Easy to add/remove features
+- ✅ Clear separation of concerns
+
+#### 2. BLoC Pattern
+
+Each feature uses the **BLoC (Business Logic Component)** pattern:
+
+```
+User Action → Event → BLoC → State → UI Update
+```
+
+**Components:**
+- **Events**: Represent user actions or system events
+- **States**: Represent the current state of the feature
+- **BLoC**: Processes events and emits new states
+
+**Example Flow:**
+```dart
+// 1. User taps "Load Tickets" button
+// 2. Event is dispatched: DashboardLoadTickets()
+// 3. BLoC handles the event
+// 4. BLoC emits new state: DashboardLoaded(tickets: [...])
+// 5. UI rebuilds with new data
+```
+
+#### 3. Shared Code
+
+Code that is used across multiple features is placed in `shared/`:
+- **Models**: Data structures (Product, Ticket, etc.)
+- **Widgets**: Reusable UI components (BottomNavBar, etc.)
+- **Utilities**: Helper functions and constants
+
+### Adding a New Feature
+
+To add a new feature, follow this structure:
+
+1. **Create feature directory:**
+   ```bash
+   mkdir -p lib/features/my_feature/{bloc,widgets}
+   ```
+
+2. **Create BLoC files:**
+   ```dart
+   // lib/features/my_feature/bloc/my_feature_event.dart
+   abstract class MyFeatureEvent extends Equatable {
+     const MyFeatureEvent();
+     @override
+     List<Object> get props => [];
+   }
+   
+   class MyFeatureLoad extends MyFeatureEvent {}
+   ```
+
+   ```dart
+   // lib/features/my_feature/bloc/my_feature_state.dart
+   abstract class MyFeatureState extends Equatable {
+     const MyFeatureState();
+     @override
+     List<Object> get props => [];
+   }
+   
+   class MyFeatureInitial extends MyFeatureState {}
+   class MyFeatureLoaded extends MyFeatureState {
+     final List<Data> items;
+     const MyFeatureLoaded(this.items);
+     @override
+     List<Object> get props => [items];
+   }
+   ```
+
+   ```dart
+   // lib/features/my_feature/bloc/my_feature_bloc.dart
+   class MyFeatureBloc extends Bloc<MyFeatureEvent, MyFeatureState> {
+     MyFeatureBloc() : super(MyFeatureInitial()) {
+       on<MyFeatureLoad>(_onLoad);
+     }
+     
+     Future<void> _onLoad(
+       MyFeatureLoad event,
+       Emitter<MyFeatureState> emit,
+     ) async {
+       emit(MyFeatureLoading());
+       // Load data...
+       emit(MyFeatureLoaded(data));
+     }
+   }
+   ```
+
+3. **Create widgets (if needed):**
+   ```dart
+   // lib/features/my_feature/widgets/my_feature_item.dart
+   class MyFeatureItem extends StatelessWidget {
+     // Widget implementation
+   }
+   ```
+
+4. **Create screen:**
+   ```dart
+   // lib/features/my_feature/my_feature_screen.dart
+   class MyFeatureScreen extends StatelessWidget {
+     @override
+     Widget build(BuildContext context) {
+       return BlocProvider(
+         create: (context) => MyFeatureBloc()..add(MyFeatureLoad()),
+         child: Scaffold(
+           // UI implementation
+         ),
+       );
+     }
+   }
+   ```
+
+### BLoC Usage Examples
+
+#### Using BLoC in a Screen
+
+```dart
+// Wrap screen with BlocProvider
+BlocProvider(
+  create: (context) => DashboardBloc()..add(DashboardLoadTickets()),
+  child: DashboardScreen(),
+)
+
+// In the screen, use BlocBuilder to react to state changes
+BlocBuilder<DashboardBloc, DashboardState>(
+  builder: (context, state) {
+    if (state is DashboardLoading) {
+      return CircularProgressIndicator();
+    }
+    if (state is DashboardLoaded) {
+      return TicketList(tickets: state.tickets);
+    }
+    return SizedBox.shrink();
+  },
+)
+```
+
+#### Dispatching Events
+
+```dart
+// Dispatch an event from UI
+context.read<DashboardBloc>().add(DashboardScanTicket());
+
+// Or use BlocProvider.of(context)
+BlocProvider.of<DashboardBloc>(context).add(DashboardScanTicket());
+```
+
+#### Listening to State Changes
+
+```dart
+// Use BlocListener for side effects (navigation, snackbars, etc.)
+BlocListener<TicketDetailBloc, TicketDetailState>(
+  listener: (context, state) {
+    if (state is TicketDetailDeleted) {
+      Navigator.pop(context);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Ticket deleted')),
+      );
+    }
+  },
+  child: YourWidget(),
+)
+```
+
+### Code Organization Guidelines
+
+1. **One feature per directory**: Each feature has its own directory
+2. **BLoC in every feature**: Each feature manages its own state
+3. **Widgets close to usage**: Feature-specific widgets stay in the feature
+4. **Shared code in `shared/`**: Only truly shared code goes here
+5. **Barrel exports**: Use `models.dart` to export all models
+6. **Clean main.dart**: Keep `main.dart` minimal (only app setup)
+
+### Benefits of This Architecture
+
+✅ **Scalability**: Easy to add new features without affecting existing ones  
+✅ **Maintainability**: Clear structure makes code easy to find and modify  
+✅ **Testability**: BLoC pattern makes unit testing straightforward  
+✅ **Team Collaboration**: Multiple developers can work on different features  
+✅ **Code Reusability**: Shared components are easily accessible  
+✅ **Separation of Concerns**: UI, business logic, and data are clearly separated
 
 ## Integration with Monorepo
 
