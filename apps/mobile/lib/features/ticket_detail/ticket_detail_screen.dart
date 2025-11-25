@@ -8,9 +8,8 @@ import 'package:smart_receipt_mobile/shared/models/models.dart';
 import 'package:smart_receipt_mobile/shared/widgets/bottom_nav_bar.dart';
 
 class TicketDetailScreen extends StatelessWidget {
-  final Ticket ticket;
-
   const TicketDetailScreen({super.key, required this.ticket});
+  final Ticket ticket;
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +44,7 @@ class TicketDetailScreen extends StatelessWidget {
                 final textTheme = Theme.of(context).textTheme;
 
                 return SingleChildScrollView(
-                  padding: const EdgeInsets.all(16.0),
+                  padding: const EdgeInsets.all(16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
@@ -69,7 +68,7 @@ class TicketDetailScreen extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: colorScheme.surfaceVariant,
+                          color: colorScheme.surfaceContainerHighest,
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Row(

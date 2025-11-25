@@ -22,7 +22,7 @@ final List<Ticket> _mockTickets = [
     date: DateTime(2024, 9, 19),
     products: const [
       Product(name: 'Paracetamol 500mg', unitPrice: 3.50, quantity: 1),
-      Product(name: 'Vitamina C (30 tabs)', unitPrice: 9.00, quantity: 1),
+      Product(name: 'Vitamina C (30 tabs)', unitPrice: 9, quantity: 1),
     ],
   ),
 ];
@@ -43,11 +43,13 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
     await Future<void>.delayed(const Duration(milliseconds: 500));
 
     final totalSpent = _mockTickets.fold(
-      0.0,
-      (sum, ticket) => sum + ticket.totalSpent,
+      0,
+      (sum, ticket) => sum + ticket.totalSpent.toInt(),
     );
 
-    emit(DashboardLoaded(tickets: _mockTickets, totalSpent: totalSpent));
+    emit(
+      DashboardLoaded(tickets: _mockTickets, totalSpent: totalSpent.toDouble()),
+    );
   }
 
   Future<void> _onScanTicket(

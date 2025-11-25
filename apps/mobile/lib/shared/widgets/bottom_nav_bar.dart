@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 
 class BottomNavBar extends StatelessWidget {
-  final int currentIndex;
-  final void Function(int) onTap;
-
   const BottomNavBar({
     super.key,
     required this.currentIndex,
     required this.onTap,
   });
+  final int currentIndex;
+  final void Function(int) onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -21,9 +20,9 @@ class BottomNavBar extends StatelessWidget {
         color: bottomNavTheme.backgroundColor ?? theme.scaffoldBackgroundColor,
         boxShadow: [
           BoxShadow(
-            color: colorScheme.shadow,
-            blurRadius: 10,
-            offset: const Offset(0, -2),
+            color: colorScheme.shadow.withOpacity(0.1),
+            blurRadius: 4,
+            offset: const Offset(0, -1),
           ),
         ],
       ),

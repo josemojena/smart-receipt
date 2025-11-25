@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 
 class DashboardScanButton extends StatelessWidget {
-  final VoidCallback onPressed;
-
   const DashboardScanButton({
     super.key,
     required this.onPressed,
   });
+  final VoidCallback onPressed;
 
   @override
   Widget build(BuildContext context) {

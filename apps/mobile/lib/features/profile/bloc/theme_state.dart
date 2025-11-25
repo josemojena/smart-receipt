@@ -10,10 +10,9 @@ abstract class ThemeState extends Equatable {
 }
 
 class ThemeInitial extends ThemeState {
+  const ThemeInitial({this.isDarkMode = false});
   @override
   final bool isDarkMode;
-
-  const ThemeInitial({this.isDarkMode = false});
 
   @override
   List<Object> get props => [isDarkMode];

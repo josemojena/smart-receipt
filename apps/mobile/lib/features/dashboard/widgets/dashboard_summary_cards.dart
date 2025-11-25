@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
 class DashboardSummaryCards extends StatelessWidget {
-  final int totalTickets;
-  final double totalSpent;
 
   const DashboardSummaryCards({
     super.key,
     required this.totalTickets,
     required this.totalSpent,
   });
+  final int totalTickets;
+  final double totalSpent;
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +21,7 @@ class DashboardSummaryCards extends StatelessWidget {
         Expanded(
           child: Card(
             child: Padding(
-              padding: const EdgeInsets.all(20.0),
+              padding: const EdgeInsets.all(20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
@@ -57,7 +57,7 @@ class DashboardSummaryCards extends StatelessWidget {
         Expanded(
           child: Card(
             child: Padding(
-              padding: const EdgeInsets.all(20.0),
+              padding: const EdgeInsets.all(20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[

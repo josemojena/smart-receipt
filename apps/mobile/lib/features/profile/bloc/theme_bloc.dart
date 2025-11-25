@@ -3,7 +3,7 @@ import 'package:smart_receipt_mobile/features/profile/bloc/theme_event.dart';
 import 'package:smart_receipt_mobile/features/profile/bloc/theme_state.dart';
 
 class ThemeBloc extends Bloc<ThemeEvent, ThemeState> {
-  ThemeBloc() : super(const ThemeInitial(isDarkMode: false)) {
+  ThemeBloc() : super(const ThemeInitial()) {
     on<ThemeToggled>(_onThemeToggled);
     on<ThemeChanged>(_onThemeChanged);
   }

@@ -12,9 +12,8 @@ class ThemeToggled extends ThemeEvent {
 }
 
 class ThemeChanged extends ThemeEvent {
-  final bool isDarkMode;
-
   const ThemeChanged(this.isDarkMode);
+  final bool isDarkMode;
 
   @override
   List<Object> get props => [isDarkMode];

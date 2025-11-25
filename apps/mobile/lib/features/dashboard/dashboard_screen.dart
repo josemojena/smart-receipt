@@ -1,22 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'bloc/dashboard_bloc.dart';
-import 'bloc/dashboard_event.dart';
-import 'bloc/dashboard_state.dart';
-import 'widgets/dashboard_summary_cards.dart';
-import 'widgets/dashboard_scan_button.dart';
-import 'widgets/dashboard_ticket_list.dart';
+import 'package:smart_receipt_mobile/features/dashboard/bloc/dashboard_bloc.dart';
+import 'package:smart_receipt_mobile/features/dashboard/bloc/dashboard_event.dart';
+import 'package:smart_receipt_mobile/features/dashboard/bloc/dashboard_state.dart';
+import 'package:smart_receipt_mobile/features/dashboard/widgets/dashboard_summary_cards.dart';
+import 'package:smart_receipt_mobile/features/dashboard/widgets/dashboard_scan_button.dart';
+import 'package:smart_receipt_mobile/features/dashboard/widgets/dashboard_ticket_list.dart';
 import 'package:smart_receipt_mobile/shared/widgets/bottom_nav_bar.dart';
 
 class DashboardScreen extends StatelessWidget {
-  final int currentIndex;
-  final void Function(int) onNavTap;
-
   const DashboardScreen({
     super.key,
     this.currentIndex = 0,
     required this.onNavTap,
   });
+  final int currentIndex;
+  final void Function(int) onNavTap;
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +64,7 @@ class DashboardScreen extends StatelessWidget {
 
             if (state is DashboardLoaded) {
               return SingleChildScrollView(
-                padding: const EdgeInsets.all(16.0),
+                padding: const EdgeInsets.all(16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
@@ -73,7 +72,7 @@ class DashboardScreen extends StatelessWidget {
                       totalTickets: state.tickets.length,
                       totalSpent: state.totalSpent,
                     ),
-                    const SizedBox(height: 32.0),
+                    const SizedBox(height: 32),
                     DashboardScanButton(
                       onPressed: () {
                         context.read<DashboardBloc>().add(
@@ -86,14 +85,14 @@ class DashboardScreen extends StatelessWidget {
                         );
                       },
                     ),
-                    const SizedBox(height: 24.0),
+                    const SizedBox(height: 24),
                     Text(
                       'Tickets Recientes',
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-                    const SizedBox(height: 16.0),
+                    const SizedBox(height: 16),
                     DashboardTicketList(tickets: state.tickets),
                   ],
                 ),

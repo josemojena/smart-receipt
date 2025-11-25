@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:smart_receipt_mobile/shared/models/models.dart';
 
 class TicketProductItem extends StatelessWidget {
-  final Product product;
-
   const TicketProductItem({super.key, required this.product});
+  final Product product;
 
   @override
   Widget build(BuildContext context) {
@@ -36,12 +35,12 @@ class TicketProductItem extends StatelessWidget {
     }
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: 10.0),
+      padding: const EdgeInsets.only(bottom: 10),
       child: Card(
         elevation: 1,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         child: Padding(
-          padding: const EdgeInsets.all(12.0),
+          padding: const EdgeInsets.all(12),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[

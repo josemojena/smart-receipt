@@ -14,20 +14,33 @@ class AppTheme {
   static ThemeData get lightTheme {
     final colorScheme = ColorScheme.fromSeed(
       seedColor: _lightPrimaryColor,
-      brightness: Brightness.light,
       primary: _lightPrimaryColor,
       secondary: _lightSecondaryColor,
       tertiary: _lightTertiaryColor,
     );
 
+    // Color de fondo con toque verde muy sutil (casi blanco)
+    final lightBackground =
+        Color.lerp(
+          Colors.white,
+          _lightPrimaryColor,
+          0.02, // Solo 2% de verde, casi blanco
+        ) ??
+        Colors.white;
+
     return ThemeData(
       useMaterial3: true,
-      colorScheme: colorScheme,
+      colorScheme: colorScheme.copyWith(
+        background: lightBackground,
+        surface:
+            lightBackground, // También aplicar a surface para AppBar y Cards
+      ),
+      scaffoldBackgroundColor: lightBackground,
       fontFamily: 'Inter',
 
       // AppBar Theme
       appBarTheme: AppBarTheme(
-        backgroundColor: colorScheme.surface,
+        backgroundColor: lightBackground,
         foregroundColor: colorScheme.onSurface,
         elevation: 0,
         centerTitle: true,
@@ -48,7 +61,6 @@ class AppTheme {
           borderRadius: BorderRadius.circular(12),
           side: BorderSide(
             color: colorScheme.outlineVariant,
-            width: 1,
           ),
         ),
         color: colorScheme.surface,
@@ -96,7 +108,7 @@ class AppTheme {
         type: BottomNavigationBarType.fixed,
         selectedItemColor: colorScheme.primary,
         unselectedItemColor: colorScheme.onSurfaceVariant,
-        backgroundColor: colorScheme.surface,
+        backgroundColor: lightBackground,
         elevation: 0,
         selectedLabelStyle: const TextStyle(
           fontSize: 12,
@@ -111,7 +123,7 @@ class AppTheme {
       // Input Decoration Theme
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: colorScheme.surfaceVariant,
+        fillColor: colorScheme.surfaceContainerHighest,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: colorScheme.outlineVariant),
@@ -166,7 +178,6 @@ class AppTheme {
           borderRadius: BorderRadius.circular(12),
           side: BorderSide(
             color: colorScheme.outlineVariant,
-            width: 1,
           ),
         ),
         color: colorScheme.surface,
@@ -229,7 +240,7 @@ class AppTheme {
       // Input Decoration Theme
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: colorScheme.surfaceVariant,
+        fillColor: colorScheme.surfaceContainerHighest,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: colorScheme.outlineVariant),

@@ -6,14 +6,14 @@ import 'package:smart_receipt_mobile/features/profile/bloc/theme_state.dart';
 import 'package:smart_receipt_mobile/shared/widgets/bottom_nav_bar.dart';
 
 class ProfileScreen extends StatelessWidget {
-  final int currentIndex;
-  final void Function(int) onNavTap;
 
   const ProfileScreen({
     super.key,
     this.currentIndex = 4,
     required this.onNavTap,
   });
+  final int currentIndex;
+  final void Function(int) onNavTap;
 
   @override
   Widget build(BuildContext context) {
@@ -22,14 +22,14 @@ class ProfileScreen extends StatelessWidget {
         title: const Text('Perfil'),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Sección de Apariencia
             Card(
               child: Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: const EdgeInsets.all(16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [

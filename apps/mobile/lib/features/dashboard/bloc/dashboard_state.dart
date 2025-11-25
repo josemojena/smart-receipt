@@ -17,19 +17,17 @@ class DashboardLoading extends DashboardState {
 }
 
 class DashboardLoaded extends DashboardState {
+  const DashboardLoaded({required this.tickets, required this.totalSpent});
   final List<Ticket> tickets;
   final double totalSpent;
-
-  const DashboardLoaded({required this.tickets, required this.totalSpent});
 
   @override
   List<Object> get props => [tickets, totalSpent];
 }
 
 class DashboardError extends DashboardState {
-  final String message;
-
   const DashboardError(this.message);
+  final String message;
 
   @override
   List<Object> get props => [message];

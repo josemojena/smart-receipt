@@ -3,9 +3,9 @@ import 'package:smart_receipt_mobile/shared/models/models.dart';
 import 'package:smart_receipt_mobile/features/ticket_detail/ticket_detail_screen.dart';
 
 class DashboardTicketList extends StatelessWidget {
-  final List<Ticket> tickets;
 
   const DashboardTicketList({super.key, required this.tickets});
+  final List<Ticket> tickets;
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +15,7 @@ class DashboardTicketList extends StatelessWidget {
     return Column(
       children: tickets.map((ticket) {
         return Padding(
-          padding: const EdgeInsets.only(bottom: 12.0),
+          padding: const EdgeInsets.only(bottom: 12),
           child: InkWell(
             onTap: () {
               Navigator.push<void>(
@@ -28,7 +28,7 @@ class DashboardTicketList extends StatelessWidget {
             borderRadius: BorderRadius.circular(12),
             child: Card(
               child: Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: const EdgeInsets.all(16),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[

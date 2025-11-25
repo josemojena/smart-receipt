@@ -9,9 +9,8 @@ abstract class TicketDetailState extends Equatable {
 }
 
 class TicketDetailInitial extends TicketDetailState {
-  final Ticket ticket;
-
   const TicketDetailInitial({required this.ticket});
+  final Ticket ticket;
 
   @override
   List<Object> get props => [ticket];
