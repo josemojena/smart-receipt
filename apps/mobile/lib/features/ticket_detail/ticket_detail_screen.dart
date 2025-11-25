@@ -19,19 +19,10 @@ class TicketDetailScreen extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: Colors.black87),
+            icon: const Icon(Icons.arrow_back),
             onPressed: () => Navigator.pop(context),
           ),
-          title: const Text(
-            'Detalle del Ticket',
-            style: TextStyle(
-              fontWeight: FontWeight.w600,
-              fontSize: 18,
-              color: Colors.black87,
-            ),
-          ),
-          backgroundColor: Colors.white,
-          elevation: 0,
+          title: const Text('Detalle del Ticket'),
         ),
         body: BlocListener<TicketDetailBloc, TicketDetailState>(
           listener: (context, state) {
@@ -50,6 +41,9 @@ class TicketDetailScreen extends StatelessWidget {
 
               if (state is TicketDetailInitial) {
                 final currentTicket = state.ticket;
+                final colorScheme = Theme.of(context).colorScheme;
+                final textTheme = Theme.of(context).textTheme;
+
                 return SingleChildScrollView(
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
@@ -58,17 +52,15 @@ class TicketDetailScreen extends StatelessWidget {
                       // Información del Ticket
                       Text(
                         'Ticket #${currentTicket.id}',
-                        style: const TextStyle(
-                          fontSize: 24,
+                        style: textTheme.headlineSmall?.copyWith(
                           fontWeight: FontWeight.w900,
-                          color: Colors.black87,
+                          color: colorScheme.onSurface,
                         ),
                       ),
                       Text(
                         '${currentTicket.storeName} - ${currentTicket.date.day}/${currentTicket.date.month}/${currentTicket.date.year}',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          color: Colors.grey,
+                        style: textTheme.bodyLarge?.copyWith(
+                          color: colorScheme.onSurfaceVariant,
                         ),
                       ),
                       const SizedBox(height: 16),
@@ -77,26 +69,24 @@ class TicketDetailScreen extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: Colors.grey.shade100,
+                          color: colorScheme.surfaceVariant,
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            const Text(
+                            Text(
                               'Total Pagado:',
-                              style: TextStyle(
-                                fontSize: 16,
+                              style: textTheme.titleMedium?.copyWith(
                                 fontWeight: FontWeight.bold,
-                                color: Colors.black87,
+                                color: colorScheme.onSurface,
                               ),
                             ),
                             Text(
                               '€ ${currentTicket.totalSpent.toStringAsFixed(2)}',
-                              style: TextStyle(
-                                fontSize: 32,
+                              style: textTheme.headlineMedium?.copyWith(
                                 fontWeight: FontWeight.w900,
-                                color: Colors.red.shade600,
+                                color: colorScheme.error,
                               ),
                             ),
                           ],
@@ -107,10 +97,9 @@ class TicketDetailScreen extends StatelessWidget {
                       // Listado de Productos
                       Text(
                         'Productos (${currentTicket.products.length} items)',
-                        style: const TextStyle(
-                          fontSize: 18,
+                        style: textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.w600,
-                          color: Colors.black87,
+                          color: colorScheme.onSurface,
                         ),
                       ),
                       const SizedBox(height: 12),
@@ -135,18 +124,6 @@ class TicketDetailScreen extends StatelessWidget {
                               const TicketDetailDelete(),
                             );
                           },
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: Colors.red.shade600,
-                            side: BorderSide(
-                              color: Colors.red.shade300,
-                              width: 1.5,
-                            ),
-                            minimumSize: const Size(double.infinity, 50),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            padding: const EdgeInsets.symmetric(vertical: 14),
-                          ),
                           child: const Text(
                             'Eliminar Ticket',
                             style: TextStyle(

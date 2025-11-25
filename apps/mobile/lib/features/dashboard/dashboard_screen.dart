@@ -9,7 +9,14 @@ import 'widgets/dashboard_ticket_list.dart';
 import 'package:smart_receipt_mobile/shared/widgets/bottom_nav_bar.dart';
 
 class DashboardScreen extends StatelessWidget {
-  const DashboardScreen({super.key});
+  final int currentIndex;
+  final void Function(int) onNavTap;
+
+  const DashboardScreen({
+    super.key,
+    this.currentIndex = 0,
+    required this.onNavTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -18,26 +25,14 @@ class DashboardScreen extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: false,
-          title: const Text(
-            'Mi Cartera de Compras',
-            style: TextStyle(
-              fontWeight: FontWeight.w600,
-              fontSize: 18,
-              color: Colors.black87,
-            ),
-          ),
-          backgroundColor: Colors.white,
-          elevation: 0,
+          title: const Text('Mi Cartera de Compras'),
           actions: [
             IconButton(
-              icon: const Icon(Icons.search, color: Colors.black87),
+              icon: const Icon(Icons.search),
               onPressed: () {},
             ),
             IconButton(
-              icon: const Icon(
-                Icons.shopping_cart_outlined,
-                color: Colors.black87,
-              ),
+              icon: const Icon(Icons.shopping_cart_outlined),
               onPressed: () {},
             ),
           ],
@@ -92,12 +87,10 @@ class DashboardScreen extends StatelessWidget {
                       },
                     ),
                     const SizedBox(height: 24.0),
-                    const Text(
+                    Text(
                       'Tickets Recientes',
-                      style: TextStyle(
-                        fontSize: 18,
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.w600,
-                        color: Colors.black87,
                       ),
                     ),
                     const SizedBox(height: 16.0),
@@ -110,15 +103,11 @@ class DashboardScreen extends StatelessWidget {
             return const SizedBox.shrink();
           },
         ),
-        bottomNavigationBar: const BottomNavBar(
-          currentIndex: 0,
-          onTap: _handleNavTap,
+        bottomNavigationBar: BottomNavBar(
+          currentIndex: currentIndex,
+          onTap: onNavTap,
         ),
       ),
     );
-  }
-
-  static void _handleNavTap(int index) {
-    // TODO: Implementar navegación
   }
 }

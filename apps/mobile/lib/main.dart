@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
-import 'features/dashboard/dashboard_screen.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:smart_receipt_mobile/features/profile/bloc/theme_bloc.dart';
+import 'package:smart_receipt_mobile/features/profile/bloc/theme_state.dart';
+import 'package:smart_receipt_mobile/shared/navigation/main_navigator.dart';
+import 'package:smart_receipt_mobile/shared/theme/app_theme.dart';
 
 void main() {
   runApp(const MyApp());
@@ -10,32 +14,19 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Smart Receipt',
-      theme: ThemeData(
-        useMaterial3: true,
-        fontFamily: 'Inter',
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF14B8A6), // Teal/verde azulado
-          brightness: Brightness.light,
-        ),
-        scaffoldBackgroundColor: Colors.white,
-        appBarTheme: const AppBarTheme(
-          backgroundColor: Colors.white,
-          foregroundColor: Colors.black87,
-          elevation: 0,
-          centerTitle: true,
-        ),
-        cardTheme: CardThemeData(
-          elevation: 0,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-            side: BorderSide(color: Colors.grey.shade200, width: 1),
-          ),
-          color: Colors.white,
-        ),
+    return BlocProvider(
+      create: (context) => ThemeBloc(),
+      child: BlocBuilder<ThemeBloc, ThemeState>(
+        builder: (context, state) {
+          return MaterialApp(
+            title: 'Smart Receipt',
+            theme: AppTheme.lightTheme,
+            darkTheme: AppTheme.darkTheme,
+            themeMode: state.isDarkMode ? ThemeMode.dark : ThemeMode.light,
+            home: const MainNavigator(),
+          );
+        },
       ),
-      home: const DashboardScreen(),
     );
   }
 }

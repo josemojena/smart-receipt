@@ -9,6 +9,9 @@ class DashboardTicketList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
     return Column(
       children: tickets.map((ticket) {
         return Padding(
@@ -35,18 +38,16 @@ class DashboardTicketList extends StatelessWidget {
                         children: [
                           Text(
                             ticket.storeName,
-                            style: const TextStyle(
+                            style: textTheme.titleMedium?.copyWith(
                               fontWeight: FontWeight.w600,
-                              fontSize: 16,
-                              color: Colors.black87,
+                              color: colorScheme.onSurface,
                             ),
                           ),
                           const SizedBox(height: 6),
                           Text(
                             '${ticket.date.day} de ${ticket.date.month}, ${ticket.totalItems} items',
-                            style: TextStyle(
-                              fontSize: 13,
-                              color: Colors.grey.shade600,
+                            style: textTheme.bodySmall?.copyWith(
+                              color: colorScheme.onSurfaceVariant,
                             ),
                           ),
                         ],
@@ -54,10 +55,9 @@ class DashboardTicketList extends StatelessWidget {
                     ),
                     Text(
                       '€ ${ticket.totalSpent.toStringAsFixed(2)}',
-                      style: const TextStyle(
-                        fontSize: 18,
+                      style: textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: Colors.black87,
+                        color: colorScheme.onSurface,
                       ),
                     ),
                   ],

@@ -12,13 +12,16 @@ class BottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const tealColor = Color(0xFF14B8A6);
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final bottomNavTheme = theme.bottomNavigationBarTheme;
+
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: bottomNavTheme.backgroundColor ?? theme.scaffoldBackgroundColor,
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.shade200,
+            color: colorScheme.shadow,
             blurRadius: 10,
             offset: const Offset(0, -2),
           ),
@@ -26,16 +29,14 @@ class BottomNavBar extends StatelessWidget {
       ),
       child: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
-        selectedItemColor: tealColor,
-        unselectedItemColor: Colors.grey.shade600,
-        backgroundColor: Colors.white,
+        selectedItemColor: bottomNavTheme.selectedItemColor,
+        unselectedItemColor: bottomNavTheme.unselectedItemColor,
+        backgroundColor: bottomNavTheme.backgroundColor,
         currentIndex: currentIndex,
         onTap: onTap,
-        elevation: 0,
-        selectedFontSize: 12,
-        unselectedFontSize: 12,
-        selectedLabelStyle: const TextStyle(fontWeight: FontWeight.w600),
-        unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w500),
+        elevation: bottomNavTheme.elevation ?? 0,
+        selectedLabelStyle: bottomNavTheme.selectedLabelStyle,
+        unselectedLabelStyle: bottomNavTheme.unselectedLabelStyle,
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home_filled, size: 24),

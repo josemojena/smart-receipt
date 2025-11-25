@@ -8,20 +8,30 @@ class TicketProductItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
     Color iconColor;
+    Color iconTextColor;
     IconData iconData;
 
-    // Asignar íconos basados en el nombre (simulación)
+    // Asignar íconos basados en el nombre usando colores del ColorScheme
     if (product.name.toLowerCase().contains('leche') ||
         product.name.toLowerCase().contains('huevo')) {
-      iconColor = Colors.yellow.shade100;
+      // Usar tertiary para productos lácteos
+      iconColor = colorScheme.tertiaryContainer;
+      iconTextColor = colorScheme.onTertiaryContainer;
       iconData = Icons.shopping_basket;
     } else if (product.name.toLowerCase().contains('carne') ||
         product.name.toLowerCase().contains('res')) {
-      iconColor = Colors.red.shade100;
+      // Usar error para productos cárnicos (rojo)
+      iconColor = colorScheme.errorContainer;
+      iconTextColor = colorScheme.onErrorContainer;
       iconData = Icons.fastfood;
     } else {
-      iconColor = Colors.blue.shade100;
+      // Usar secondary para otros productos
+      iconColor = colorScheme.secondaryContainer;
+      iconTextColor = colorScheme.onSecondaryContainer;
       iconData = Icons.receipt_long;
     }
 
@@ -43,7 +53,11 @@ class TicketProductItem extends StatelessWidget {
                   color: iconColor,
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Icon(iconData, size: 30, color: Colors.grey.shade700),
+                child: Icon(
+                  iconData,
+                  size: 30,
+                  color: iconTextColor,
+                ),
               ),
               const SizedBox(width: 12),
               // Detalles del Producto
@@ -53,16 +67,17 @@ class TicketProductItem extends StatelessWidget {
                   children: <Widget>[
                     Text(
                       product.name,
-                      style: const TextStyle(
-                        fontSize: 16,
+                      style: textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: Colors.black,
+                        color: colorScheme.onSurface,
                       ),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       'Cant: ${product.quantity} uds. | P. Unit: € ${product.unitPrice.toStringAsFixed(2)}',
-                      style: const TextStyle(fontSize: 13, color: Colors.grey),
+                      style: textTheme.bodySmall?.copyWith(
+                        color: colorScheme.onSurfaceVariant,
+                      ),
                     ),
                   ],
                 ),
@@ -70,10 +85,9 @@ class TicketProductItem extends StatelessWidget {
               // Precio Total
               Text(
                 '€ ${product.totalPrice.toStringAsFixed(2)}',
-                style: const TextStyle(
-                  fontSize: 18,
+                style: textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: Colors.black87,
+                  color: colorScheme.onSurface,
                 ),
               ),
             ],

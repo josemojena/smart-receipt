@@ -12,6 +12,9 @@ class DashboardSummaryCards extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
     return Row(
       children: <Widget>[
         // Tarjeta de Total de Tickets
@@ -24,27 +27,24 @@ class DashboardSummaryCards extends StatelessWidget {
                 children: <Widget>[
                   Text(
                     'Total de Tickets',
-                    style: TextStyle(
-                      fontSize: 13,
+                    style: textTheme.bodySmall?.copyWith(
                       fontWeight: FontWeight.w500,
-                      color: Colors.grey.shade600,
+                      color: colorScheme.onSurfaceVariant,
                     ),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     '$totalTickets',
-                    style: const TextStyle(
-                      fontSize: 28,
+                    style: textTheme.headlineMedium?.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: Colors.black87,
+                      color: colorScheme.onSurface,
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     'Último: Hoy',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey.shade500,
+                    style: textTheme.bodySmall?.copyWith(
+                      color: colorScheme.onSurfaceVariant.withOpacity(0.7),
                     ),
                   ),
                 ],
@@ -63,27 +63,24 @@ class DashboardSummaryCards extends StatelessWidget {
                 children: <Widget>[
                   Text(
                     'Gasto Total',
-                    style: TextStyle(
-                      fontSize: 13,
+                    style: textTheme.bodySmall?.copyWith(
                       fontWeight: FontWeight.w500,
-                      color: Colors.grey.shade600,
+                      color: colorScheme.onSurfaceVariant,
                     ),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     '€ ${totalSpent.toStringAsFixed(2)}',
-                    style: const TextStyle(
-                      fontSize: 28,
+                    style: textTheme.headlineMedium?.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: Colors.black87,
+                      color: colorScheme.onSurface,
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     'Ahorro Est.: € 45.00',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey.shade500,
+                    style: textTheme.bodySmall?.copyWith(
+                      color: colorScheme.onSurfaceVariant.withOpacity(0.7),
                     ),
                   ),
                 ],
