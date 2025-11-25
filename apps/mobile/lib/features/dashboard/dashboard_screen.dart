@@ -24,7 +24,7 @@ class DashboardScreen extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: false,
-          title: const Text('Mi Cartera de Compras'),
+          title: const Text('Smart Receipt Scanner'),
           actions: [
             IconButton(
               icon: const Icon(Icons.search),
