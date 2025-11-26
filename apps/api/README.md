@@ -52,4 +52,18 @@ Available debug configurations:
 
 - `PORT` - Server port (default: 3001)
 - `HOST` - Server host (default: 0.0.0.0)
+- `DO_SPACES_ENDPOINT` - Digital Ocean Spaces endpoint (default: https://nyc3.digitaloceanspaces.com)
+- `DO_SPACES_REGION` - Digital Ocean Spaces region (default: nyc3)
+- `DO_SPACES_KEY` - Digital Ocean Spaces access key ID
+- `DO_SPACES_SECRET` - Digital Ocean Spaces secret access key
+- `DO_SPACES_BUCKET` - Digital Ocean Spaces bucket name
+
+## Upload Endpoint
+
+The API includes a `/upload` endpoint that accepts file uploads and stores them in Digital Ocean Spaces (S3-compatible storage).
+
+**POST /upload**
+- Accepts: `multipart/form-data` with a `file` field
+- Returns: `{ success: true, filename: string, url: string }`
+- Max file size: 10MB
 

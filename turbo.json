@@ -35,7 +35,12 @@
         "HOST",
         "GEMINI_API_KEY",
         "NODE_ENV",
-        "DATABASE_URL"
+        "DATABASE_URL",
+        "DO_SPACES_ENDPOINT",
+        "DO_SPACES_REGION",
+        "DO_SPACES_KEY",
+        "DO_SPACES_SECRET",
+        "DO_SPACES_BUCKET"
       ]
     }
   }
