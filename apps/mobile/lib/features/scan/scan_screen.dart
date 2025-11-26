@@ -92,12 +92,119 @@ class ScanScreen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 16),
+                    // Botón para subir
+                    ElevatedButton(
+                      onPressed: () {
+                        context.read<ScanBloc>().add(
+                          ScanUploadImage(state.imagePath),
+                        );
+                      },
+                      child: const Text('Subir Imagen'),
+                    ),
+                    const SizedBox(height: 8),
                     // Botón para limpiar
                     OutlinedButton(
                       onPressed: () {
                         context.read<ScanBloc>().add(const ScanClearImage());
                       },
                       child: const Text('Seleccionar otra imagen'),
+                    ),
+                  ],
+                ),
+              );
+            }
+
+            if (state is ScanUploading) {
+              return SingleChildScrollView(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    // Imagen que se está subiendo
+                    Card(
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: Opacity(
+                          opacity: 0.7,
+                          child: Image.file(
+                            File(state.imagePath),
+                            fit: BoxFit.contain,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    // Indicador de progreso
+                    Column(
+                      children: [
+                        CircularProgressIndicator(
+                          value: state.progress > 0 ? state.progress : null,
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          'Subiendo imagen... ${(state.progress * 100).toInt()}%',
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              );
+            }
+
+            if (state is ScanUploadSuccess) {
+              return SingleChildScrollView(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    // Imagen subida
+                    Card(
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: Image.file(
+                          File(state.imagePath),
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    // Mensaje de éxito
+                    Card(
+                      color: Theme.of(context).colorScheme.primaryContainer,
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.check_circle,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onPrimaryContainer,
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                'Imagen subida correctamente',
+                                style: Theme.of(context).textTheme.bodyLarge
+                                    ?.copyWith(
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.onPrimaryContainer,
+                                    ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    // Botón para volver
+                    ElevatedButton(
+                      onPressed: () {
+                        context.read<ScanBloc>().add(const ScanClearImage());
+                      },
+                      child: const Text('Escanear otro ticket'),
                     ),
                   ],
                 ),

@@ -18,3 +18,12 @@ class ScanOpenGallery extends ScanEvent {
 class ScanClearImage extends ScanEvent {
   const ScanClearImage();
 }
+
+class ScanUploadImage extends ScanEvent {
+  const ScanUploadImage(this.imagePath);
+
+  final String imagePath;
+
+  @override
+  List<Object> get props => [imagePath];
+}

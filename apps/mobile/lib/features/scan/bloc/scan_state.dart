@@ -16,20 +16,45 @@ class ScanLoading extends ScanState {
 }
 
 class ScanImageSelected extends ScanState {
-  final String imagePath;
-
   const ScanImageSelected(this.imagePath);
+
+  final String imagePath;
 
   @override
   List<Object> get props => [imagePath];
 }
 
 class ScanError extends ScanState {
-  final String message;
-
   const ScanError(this.message);
+
+  final String message;
 
   @override
   List<Object> get props => [message];
 }
 
+class ScanUploading extends ScanState {
+  const ScanUploading({
+    required this.imagePath,
+    this.progress = 0,
+  });
+
+  final String imagePath;
+  final double progress;
+
+  @override
+  List<Object> get props => [imagePath, progress];
+}
+
+class ScanUploadSuccess extends ScanState {
+  const ScanUploadSuccess({
+    required this.imagePath,
+    required this.response,
+  });
+
+  final String imagePath;
+  final Map<String, dynamic> response;
+
+  @override
+  List<Object> get props => [imagePath, response];
+}
