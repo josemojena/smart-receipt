@@ -4,10 +4,16 @@ import 'package:smart_receipt_mobile/features/dashboard/bloc/dashboard_bloc.dart
 import 'package:smart_receipt_mobile/features/dashboard/bloc/dashboard_event.dart';
 import 'package:smart_receipt_mobile/features/profile/bloc/theme_bloc.dart';
 import 'package:smart_receipt_mobile/features/profile/bloc/theme_state.dart';
+import 'package:smart_receipt_mobile/infrastructure/dependency_injection/dependency_injection.dart';
 import 'package:smart_receipt_mobile/shared/navigation/app_router.dart';
 import 'package:smart_receipt_mobile/shared/theme/app_theme.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Setup dependency injection
+  await setupDependencyInjection();
+
   runApp(const MyApp());
 }
 
