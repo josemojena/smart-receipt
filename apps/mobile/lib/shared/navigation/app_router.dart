@@ -53,12 +53,11 @@ class AppRouter {
         path: '/ticket/:id',
         builder: (context, state) {
           final ticketId = int.tryParse(state.pathParameters['id'] ?? '0') ?? 0;
-          // Obtener el ticket del DashboardBloc
+
           final dashboardBloc = context.read<DashboardBloc>();
           final ticket = dashboardBloc.getTicketById(ticketId);
 
           if (ticket == null) {
-            // Si no se encuentra el ticket, volver al dashboard
             return const DashboardScreen(
               currentIndex: 0,
               onNavTap: _handleNavTap,
@@ -73,7 +72,6 @@ class AppRouter {
         builder: (context, state) {
           final product = state.extra as Product?;
           if (product == null) {
-            // Si no hay producto, volver atrás
             context.pop();
             return const SizedBox.shrink();
           }
