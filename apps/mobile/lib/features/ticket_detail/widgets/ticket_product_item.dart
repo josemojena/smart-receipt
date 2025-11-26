@@ -2,70 +2,45 @@ import 'package:flutter/material.dart';
 import 'package:smart_receipt_mobile/shared/models/models.dart';
 
 class TicketProductItem extends StatelessWidget {
-  const TicketProductItem({super.key, required this.product});
+  const TicketProductItem({
+    super.key,
+    required this.product,
+    required this.isSelected,
+    required this.onSelectionChanged,
+  });
+
   final Product product;
+  final bool isSelected;
+  final void Function(Product product, bool isSelected) onSelectionChanged;
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
-    Color iconColor;
-    Color iconTextColor;
-    IconData iconData;
-
-    // Asignar íconos basados en el nombre usando colores del ColorScheme
-    if (product.name.toLowerCase().contains('leche') ||
-        product.name.toLowerCase().contains('huevo')) {
-      // Usar tertiary para productos lácteos
-      iconColor = colorScheme.tertiaryContainer;
-      iconTextColor = colorScheme.onTertiaryContainer;
-      iconData = Icons.shopping_basket;
-    } else if (product.name.toLowerCase().contains('carne') ||
-        product.name.toLowerCase().contains('res')) {
-      // Usar error para productos cárnicos (rojo)
-      iconColor = colorScheme.errorContainer;
-      iconTextColor = colorScheme.onErrorContainer;
-      iconData = Icons.fastfood;
-    } else {
-      // Usar secondary para otros productos
-      iconColor = colorScheme.secondaryContainer;
-      iconTextColor = colorScheme.onSecondaryContainer;
-      iconData = Icons.receipt_long;
-    }
-
     return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.only(bottom: 6),
       child: Card(
-        elevation: 1,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+          side: BorderSide(
+            color: colorScheme.outlineVariant.withOpacity(0.3),
+            width: 1,
+          ),
+        ),
         child: Padding(
-          padding: const EdgeInsets.all(12),
+          padding: const EdgeInsets.all(16),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              // Icono/Placeholder
-              Container(
-                width: 60,
-                height: 60,
-                decoration: BoxDecoration(
-                  color: iconColor,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(
-                  iconData,
-                  size: 30,
-                  color: iconTextColor,
-                ),
-              ),
-              const SizedBox(width: 12),
               // Detalles del Producto
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      product.name,
+                      product.name.toUpperCase(),
                       style: textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.bold,
                         color: colorScheme.onSurface,
@@ -81,12 +56,34 @@ class TicketProductItem extends StatelessWidget {
                   ],
                 ),
               ),
-              // Precio Total
-              Text(
-                '€ ${product.totalPrice.toStringAsFixed(2)}',
-                style: textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: colorScheme.onSurface,
+              const SizedBox(width: 12),
+              // Checkbox para seleccionar producto
+              GestureDetector(
+                onTap: () {
+                  onSelectionChanged(product, !isSelected);
+                },
+                child: Container(
+                  width: 24,
+                  height: 24,
+                  decoration: BoxDecoration(
+                    color: isSelected
+                        ? colorScheme.primary
+                        : Colors.transparent,
+                    borderRadius: BorderRadius.circular(4),
+                    border: Border.all(
+                      color: isSelected
+                          ? colorScheme.primary
+                          : colorScheme.outlineVariant,
+                      width: 1.5,
+                    ),
+                  ),
+                  child: isSelected
+                      ? Icon(
+                          Icons.check,
+                          size: 16,
+                          color: colorScheme.onPrimary,
+                        )
+                      : null,
                 ),
               ),
             ],

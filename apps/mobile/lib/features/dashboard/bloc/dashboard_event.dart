@@ -14,3 +14,12 @@ class DashboardLoadTickets extends DashboardEvent {
 class DashboardScanTicket extends DashboardEvent {
   const DashboardScanTicket();
 }
+
+class DashboardDeleteTicket extends DashboardEvent {
+  final int ticketId;
+
+  const DashboardDeleteTicket(this.ticketId);
+
+  @override
+  List<Object> get props => [ticketId];
+}

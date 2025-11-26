@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:smart_receipt_mobile/shared/models/models.dart';
-import 'package:smart_receipt_mobile/features/ticket_detail/ticket_detail_screen.dart';
 
 class DashboardTicketList extends StatelessWidget {
-
   const DashboardTicketList({super.key, required this.tickets});
   final List<Ticket> tickets;
 
@@ -18,12 +17,7 @@ class DashboardTicketList extends StatelessWidget {
           padding: const EdgeInsets.only(bottom: 12),
           child: InkWell(
             onTap: () {
-              Navigator.push<void>(
-                context,
-                MaterialPageRoute<void>(
-                  builder: (context) => TicketDetailScreen(ticket: ticket),
-                ),
-              );
+              context.push('/ticket/${ticket.id}');
             },
             borderRadius: BorderRadius.circular(12),
             child: Card(

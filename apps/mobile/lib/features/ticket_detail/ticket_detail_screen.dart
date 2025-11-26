@@ -1,155 +1,254 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:smart_receipt_mobile/features/ticket_detail/bloc/ticket_detail_bloc.dart';
-import 'package:smart_receipt_mobile/features/ticket_detail/bloc/ticket_detail_event.dart';
-import 'package:smart_receipt_mobile/features/ticket_detail/bloc/ticket_detail_state.dart';
+import 'package:go_router/go_router.dart';
 import 'package:smart_receipt_mobile/features/ticket_detail/widgets/ticket_product_item.dart';
 import 'package:smart_receipt_mobile/shared/models/models.dart';
 import 'package:smart_receipt_mobile/shared/widgets/bottom_nav_bar.dart';
 
-class TicketDetailScreen extends StatelessWidget {
+class TicketDetailScreen extends StatefulWidget {
   const TicketDetailScreen({super.key, required this.ticket});
   final Ticket ticket;
 
   @override
+  State<TicketDetailScreen> createState() => _TicketDetailScreenState();
+}
+
+class _TicketDetailScreenState extends State<TicketDetailScreen> {
+  late Product _selectedProduct;
+
+  @override
+  void initState() {
+    super.initState();
+    // Seleccionar el producto más caro por defecto
+    if (widget.ticket.products.isNotEmpty) {
+      _selectedProduct = widget.ticket.products.reduce(
+        (a, b) => a.totalPrice > b.totalPrice ? a : b,
+      );
+    } else {
+      _selectedProduct = widget.ticket.products.first;
+    }
+  }
+
+  String _formatDate(DateTime date) {
+    return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
+  }
+
+  String _formatTime(DateTime date) {
+    return '${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
+  }
+
+  String _formatTransactionId(int id) {
+    return 'T${id.toString().padLeft(3, '0')}';
+  }
+
+  void _onProductSelectionChanged(Product product, bool isSelected) {
+    setState(() {
+      if (isSelected) {
+        _selectedProduct = product;
+      } else if (_selectedProduct == product) {
+        // Si se deselecciona el producto actualmente seleccionado,
+        // mantener la selección (no permitir deseleccionar)
+        return;
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => TicketDetailBloc(ticket: ticket),
-      child: Scaffold(
-        appBar: AppBar(
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () => Navigator.pop(context),
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
+    return Scaffold(
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back),
+              onPressed: () => context.pop(),
+            ),
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Flexible(
+                  flex: 1,
+                  child: Text(
+                    'Volver al Historial',
+                    style: textTheme.bodyMedium?.copyWith(
+                      color: colorScheme.onSurface,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                Flexible(
+                  flex: 1,
+                  child: Text(
+                    widget.ticket.storeName.toUpperCase(),
+                    style: textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: colorScheme.onSurface,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.end,
+                  ),
+                ),
+              ],
+            ),
+            floating: true,
+            snap: true,
+            pinned: false,
           ),
-          title: const Text('Detalle del Ticket'),
-        ),
-        body: BlocListener<TicketDetailBloc, TicketDetailState>(
-          listener: (context, state) {
-            if (state is TicketDetailDeleted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Ticket eliminado.')),
-              );
-              Navigator.pop(context);
-            }
-          },
-          child: BlocBuilder<TicketDetailBloc, TicketDetailState>(
-            builder: (context, state) {
-              if (state is TicketDetailLoading) {
-                return const Center(child: CircularProgressIndicator());
-              }
-
-              if (state is TicketDetailInitial) {
-                final currentTicket = state.ticket;
-                final colorScheme = Theme.of(context).colorScheme;
-                final textTheme = Theme.of(context).textTheme;
-
-                return SingleChildScrollView(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      // Información del Ticket
-                      Text(
-                        'Ticket #${currentTicket.id}',
-                        style: textTheme.headlineSmall?.copyWith(
-                          fontWeight: FontWeight.w900,
-                          color: colorScheme.onSurface,
-                        ),
-                      ),
-                      Text(
-                        '${currentTicket.storeName} - ${currentTicket.date.day}/${currentTicket.date.month}/${currentTicket.date.year}',
-                        style: textTheme.bodyLarge?.copyWith(
-                          color: colorScheme.onSurfaceVariant,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-
-                      // Total Pagado
-                      Container(
-                        padding: const EdgeInsets.all(12),
+          SliverPadding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 12,
+              vertical: 16,
+            ),
+            sliver: SliverList(
+              delegate: SliverChildListDelegate([
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    // Sección delimitada con información de la transacción
+                    SizedBox(
+                      width: double.infinity,
+                      child: Container(
+                        padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: colorScheme.surfaceContainerHighest,
+                          color: colorScheme.surface,
                           borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: colorScheme.outlineVariant.withOpacity(0.5),
+                            width: 1,
+                          ),
                         ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            // Total grande en verde
                             Text(
-                              'Total Pagado:',
-                              style: textTheme.titleMedium?.copyWith(
+                              '€${widget.ticket.totalSpent.toStringAsFixed(2)}',
+                              style: textTheme.displayLarge?.copyWith(
                                 fontWeight: FontWeight.bold,
-                                color: colorScheme.onSurface,
+                                color: colorScheme.primary,
                               ),
                             ),
+                            const SizedBox(height: 12),
+
+                            // Información de la transacción
                             Text(
-                              '€ ${currentTicket.totalSpent.toStringAsFixed(2)}',
-                              style: textTheme.headlineMedium?.copyWith(
-                                fontWeight: FontWeight.w900,
-                                color: colorScheme.error,
+                              'Fecha: ${_formatDate(widget.ticket.date)} (${_formatTime(widget.ticket.date)})',
+                              style: textTheme.bodyMedium?.copyWith(
+                                color: colorScheme.onSurfaceVariant,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              'Transacción ID: ${_formatTransactionId(widget.ticket.id)}',
+                              style: textTheme.bodyMedium?.copyWith(
+                                color: colorScheme.onSurfaceVariant,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              'Items: ${widget.ticket.products.length}',
+                              style: textTheme.bodyMedium?.copyWith(
+                                color: colorScheme.onSurfaceVariant,
                               ),
                             ),
                           ],
                         ),
                       ),
-                      const SizedBox(height: 24),
+                    ),
+                    const SizedBox(height: 32),
 
-                      // Listado de Productos
-                      Text(
-                        'Productos (${currentTicket.products.length} items)',
-                        style: textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.w600,
-                          color: colorScheme.onSurface,
-                        ),
+                    // Header de productos
+                    Text(
+                      'Detalle de Productos (${widget.ticket.products.length})',
+                      style: textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: colorScheme.onSurface,
                       ),
-                      const SizedBox(height: 12),
+                    ),
+                    const SizedBox(height: 16),
 
-                      // Lista de Productos
-                      Column(
-                        children: currentTicket.products
-                            .map(
-                              (product) => TicketProductItem(product: product),
-                            )
-                            .toList(),
-                      ),
+                    // Lista de Productos
+                    Column(
+                      children: widget.ticket.products
+                          .map(
+                            (product) => TicketProductItem(
+                              product: product,
+                              isSelected: product == _selectedProduct,
+                              onSelectionChanged: _onProductSelectionChanged,
+                            ),
+                          )
+                          .toList(),
+                    ),
 
-                      const SizedBox(height: 32),
+                    const SizedBox(height: 24),
 
-                      // Botón de Eliminación
+                    // Botón de Analizar (producto seleccionado)
+                    if (widget.ticket.products.isNotEmpty)
                       SizedBox(
                         width: double.infinity,
-                        child: OutlinedButton(
+                        child: ElevatedButton.icon(
                           onPressed: () {
-                            context.read<TicketDetailBloc>().add(
-                              const TicketDetailDelete(),
+                            context.push(
+                              '/product-analysis/${_selectedProduct.name}',
+                              extra: _selectedProduct,
                             );
                           },
-                          child: const Text(
-                            'Eliminar Ticket',
-                            style: TextStyle(
-                              fontSize: 15,
+                          icon: Container(
+                            width: 24,
+                            height: 24,
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.2),
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: const Icon(Icons.analytics, size: 16),
+                          ),
+                          label: Text(
+                            'Analizar "${_selectedProduct.name.toUpperCase()}"',
+                            style: const TextStyle(
+                              fontSize: 16,
                               fontWeight: FontWeight.w600,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: colorScheme.primary,
+                            foregroundColor: colorScheme.onPrimary,
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
                             ),
                           ),
                         ),
                       ),
-                    ],
-                  ),
-                );
-              }
-
-              return const SizedBox.shrink();
-            },
+                  ],
+                ),
+              ]),
+            ),
           ),
-        ),
-        bottomNavigationBar: const BottomNavBar(
-          currentIndex: 0,
-          onTap: _handleNavTap,
-        ),
+        ],
+      ),
+      bottomNavigationBar: BottomNavBar(
+        currentIndex: 1, // Historial está activo
+        onTap: (index) {
+          switch (index) {
+            case 0:
+              context.go('/');
+              break;
+            case 1:
+              context.go('/history');
+              break;
+            case 2:
+              context.go('/advisor');
+              break;
+            case 3:
+              context.go('/profile');
+              break;
+          }
+        },
       ),
     );
-  }
-
-  static void _handleNavTap(int index) {
-    // TODO: Implementar navegación
   }
 }

@@ -6,10 +6,9 @@ import 'package:smart_receipt_mobile/features/profile/bloc/theme_state.dart';
 import 'package:smart_receipt_mobile/shared/widgets/bottom_nav_bar.dart';
 
 class ProfileScreen extends StatelessWidget {
-
   const ProfileScreen({
     super.key,
-    this.currentIndex = 4,
+    this.currentIndex = 3,
     required this.onNavTap,
   });
   final int currentIndex;

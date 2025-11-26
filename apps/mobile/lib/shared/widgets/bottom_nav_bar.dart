@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class BottomNavBar extends StatelessWidget {
   const BottomNavBar({
@@ -14,6 +15,19 @@ class BottomNavBar extends StatelessWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final bottomNavTheme = theme.bottomNavigationBarTheme;
+    final location = GoRouterState.of(context).uri.path;
+
+    // Determinar el índice actual basado en la ruta
+    int activeIndex = currentIndex;
+    if (location == '/' || location.startsWith('/ticket/')) {
+      activeIndex = 0;
+    } else if (location == '/history') {
+      activeIndex = 1;
+    } else if (location == '/advisor') {
+      activeIndex = 2;
+    } else if (location == '/profile') {
+      activeIndex = 3;
+    }
 
     return Container(
       decoration: BoxDecoration(
@@ -31,8 +45,25 @@ class BottomNavBar extends StatelessWidget {
         selectedItemColor: bottomNavTheme.selectedItemColor,
         unselectedItemColor: bottomNavTheme.unselectedItemColor,
         backgroundColor: bottomNavTheme.backgroundColor,
-        currentIndex: currentIndex,
-        onTap: onTap,
+        currentIndex: activeIndex,
+        onTap: (index) {
+          onTap(index);
+          // Navegar con go_router
+          switch (index) {
+            case 0:
+              context.go('/');
+              break;
+            case 1:
+              context.go('/history');
+              break;
+            case 2:
+              context.go('/advisor');
+              break;
+            case 3:
+              context.go('/profile');
+              break;
+          }
+        },
         elevation: bottomNavTheme.elevation ?? 0,
         selectedLabelStyle: bottomNavTheme.selectedLabelStyle,
         unselectedLabelStyle: bottomNavTheme.unselectedLabelStyle,
@@ -42,16 +73,12 @@ class BottomNavBar extends StatelessWidget {
             label: 'Inicio',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.search, size: 24),
-            label: 'Buscar',
+            icon: Icon(Icons.list, size: 24),
+            label: 'Historial',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.favorite_border, size: 24),
-            label: 'Favoritos',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.notifications_none, size: 24),
-            label: 'Alertas',
+            icon: Icon(Icons.lightbulb_outline, size: 24),
+            label: 'Asesor',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person_outline, size: 24),
