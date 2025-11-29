@@ -3,6 +3,7 @@
 
 generator client {
     provider = "prisma-client-js"
+    output   = "../generated"
 }
 
 datasource db {
@@ -32,14 +33,32 @@ type ReceiptData {
     items         ReceiptItem[]
 }
 
+type ReceiptFile {
+    filename String @map("filename")
+    url      String @map("url")
+    size     Int    @map("size")
+}
+
 model Receipt {
-    id           String       @id @default(auto()) @map("_id") @db.ObjectId
-    userId       String       @map("user_id")
-    documentHash String       @unique @map("document_hash")
-    uploadedAt   DateTime     @default(now()) @map("uploaded_at")
-    aiModel      String       @map("ai_model")
+    id           String        @id @default(auto()) @map("_id") @db.ObjectId
+    userId       String        @map("user_id")
+    documentHash String        @unique @map("document_hash")
+    uploadedAt   DateTime      @default(now()) @map("uploaded_at")
+    aiModel      String        @map("ai_model")
     data         ReceiptData?
+    files        ReceiptFile[]
 
     @@index([userId])
     @@map("receipts")
+}
+
+model TicketProcessingMessage {
+    id        String   @id @default(auto()) @map("_id") @db.ObjectId
+    url       String
+    status    String   @default("pending")
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+
+    @@index([id])
+    @@map("ticket_processing_message")
 }

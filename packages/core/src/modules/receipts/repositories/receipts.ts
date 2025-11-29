@@ -1,7 +1,8 @@
+//now prisma is in database generated/client
 import { prisma } from '@repo/database';
 import type { Receipt, Prisma } from '@repo/database';
 
-export class ReceiptsRepository {
+export const receiptsRepository = {
     /**
      * Find all receipts, optionally filtered by userId
      */
@@ -12,7 +13,7 @@ export class ReceiptsRepository {
                 uploadedAt: 'desc',
             },
         });
-    }
+    },
 
     /**
      * Find a receipt by ID
@@ -21,7 +22,7 @@ export class ReceiptsRepository {
         return prisma.receipt.findUnique({
             where: { id },
         });
-    }
+    },
 
     /**
      * Find a receipt by document hash
@@ -30,16 +31,16 @@ export class ReceiptsRepository {
         return prisma.receipt.findUnique({
             where: { documentHash },
         });
-    }
+    },
 
     /**
      * Create a new receipt
      */
-    async create(data: Prisma.ReceiptCreateInput): Promise<Receipt> {
+    async create(data: Omit<Prisma.ReceiptCreateInput, 'id'>): Promise<Receipt> {
         return prisma.receipt.create({
             data,
         });
-    }
+    },
 
     /**
      * Update a receipt by ID
@@ -49,7 +50,7 @@ export class ReceiptsRepository {
             where: { id },
             data,
         });
-    }
+    },
 
     /**
      * Delete a receipt by ID
@@ -58,7 +59,7 @@ export class ReceiptsRepository {
         return prisma.receipt.delete({
             where: { id },
         });
-    }
+    },
 
     /**
      * Count receipts, optionally filtered by userId
@@ -67,6 +68,6 @@ export class ReceiptsRepository {
         return prisma.receipt.count({
             where: filters?.userId ? { userId: filters.userId } : undefined,
         });
-    }
-}
+    },
+};
 

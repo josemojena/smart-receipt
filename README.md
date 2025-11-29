@@ -196,10 +196,9 @@ src/
 
 **Usage:**
 ```typescript
-import { ReceiptsRepository } from '@repo/core';
+import { receiptsRepository } from '@repo/core';
 
-const receiptsRepo = new ReceiptsRepository();
-const receipts = await receiptsRepo.findAll({ userId: 'user123' });
+const receipts = await receiptsRepository.findAll({ userId: 'user123' });
 ```
 
 ### `@repo/ui`

@@ -1,19 +1,7 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient as PrismaClientGenerated } from '../generated/index.js';
+export type { Receipt, TicketProcessingMessage, Prisma } from '../generated/index.js';
+export type { ReceiptData, ReceiptItem } from './types.js';
 
-export { PrismaClient };
-export type { Receipt, Prisma } from '@prisma/client';
-export type { ReceiptData, ReceiptItem } from './types';
-
-// Singleton pattern for Prisma Client
-const globalForPrisma = globalThis as unknown as {
-    prisma: PrismaClient | undefined;
-};
-
-export const prisma =
-    globalForPrisma.prisma ??
-    new PrismaClient({
-        log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
-    });
-
-if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
-
+// Note: DATABASE_URL must be provided by the consuming application
+// Each app should load its own .env file before importing this package
+export const prisma = new PrismaClientGenerated();

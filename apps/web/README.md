@@ -1,56 +1,63 @@
-# Web App (Remix.js)
+# Smart Receipt Web App
 
-Smart Receipt web application built with Remix.js and integrated with Turborepo.
+A Remix-based web application for uploading and processing receipt tickets using AI.
+
+## Features
+
+- 🖼️ **Drag & Drop Upload**: Easy file upload with drag and drop support
+- 🤖 **AI-Powered Extraction**: Uses Google Gemini AI to extract product data from receipts
+- 📊 **Product Visualization**: Beautiful table view of extracted products with details
+- 🎨 **Modern UI**: Built with shadcn/ui components and Tailwind CSS
+
+## Setup
+
+1. Install dependencies:
+```bash
+pnpm install
+```
+
+2. Configure environment variables (optional):
+Create a `.env` file in the root of `apps/web`:
+```env
+API_URL=http://localhost:3001
+```
+
+If `API_URL` is not set, it defaults to `http://localhost:3001`.
+
+3. Start the development server:
+```bash
+pnpm dev
+```
+
+The app will be available at `http://localhost:3002` (configured in `vite.config.ts`).
+
+## Usage
+
+1. **Upload a Receipt**: 
+   - Drag and drop an image file onto the upload area, or
+   - Click "Select File" to choose a file from your computer
+
+2. **View Results**:
+   - Once processed, you'll see:
+     - Ticket information (store, date, transaction ID, total)
+     - Tax breakdown (if available)
+     - Complete list of products with:
+       - Product names (original and normalized)
+       - Category
+       - Quantity and unit of measure
+       - Unit price and total price
 
 ## Tech Stack
 
-- **Remix.js** - Full-stack React framework
-- **Vite** - Build tool and dev server
-- **TypeScript** - Type safety
-- **Tailwind CSS** - Styling
-- **Turborepo** - Monorepo integration
+- **Framework**: Remix
+- **Styling**: Tailwind CSS
+- **UI Components**: shadcn/ui
+- **Icons**: Lucide React
+- **API**: Connects to Smart Receipt API (`apps/api`)
 
-## Development
+## API Endpoint
 
-```bash
-# Start dev server (runs on port 3002)
-pnpm dev
-
-# Build for production
-pnpm build
-
-# Start production server
-pnpm start
-
-# Type check
-pnpm check-types
-
-# Lint
-pnpm lint
-```
-
-## Project Structure
-
-```
-app/
-  ├── routes/          # Route files (file-based routing)
-  ├── entry.client.tsx # Client entry point
-  ├── entry.server.tsx # Server entry point
-  └── root.tsx         # Root layout component
-```
-
-## Integration
-
-This app is integrated with:
-- `@repo/core` - Business logic
-- `@repo/database` - Database access
-- `@repo/ui` - Shared UI components
-
-## Environment Variables
-
-Create a `.env` file with:
-
-```env
-DATABASE_URL="mongodb://localhost:27017/smart-receipt?replicaSet=rs0"
-```
-
+The app connects to the `/process-ticket` endpoint of the Smart Receipt API, which:
+- Accepts `multipart/form-data` with a `file` field
+- Returns extracted ticket data in JSON format
+- Uses Google Gemini AI for OCR and data extraction
