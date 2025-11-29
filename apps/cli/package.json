@@ -7,7 +7,7 @@
     "cli": "./dist/index.js"
   },
   "scripts": {
-    "dev": "tsx src/index.ts",
+    "dev-cli": "tsx src/index.ts",
     "build": "tsup",
     "start": "node dist/index.js",
     "lint": "eslint --max-warnings 0",
@@ -15,7 +15,10 @@
     "extract-text": "tsx src/gemini-ocr.ts"
   },
   "dependencies": {
-    "@google/generative-ai": "^0.24.1"
+    "@google/generative-ai": "^0.24.1",
+    "@mistralai/mistralai": "^1.10.0",
+    "@repo/core": "workspace:*",
+    "dotenv": "^17.2.3"
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",

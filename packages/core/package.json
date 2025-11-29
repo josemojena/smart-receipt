@@ -10,6 +10,26 @@
             "types": "./src/index.ts",
             "require": "./src/index.ts",
             "import": "./src/index.ts"
+        },
+        "./modules/receipts/repositories": {
+            "types": "./src/modules/receipts/repositories/index.ts",
+            "import": "./src/modules/receipts/repositories/index.ts",
+            "require": "./src/modules/receipts/repositories/index.ts"
+        },
+        "./modules/receipts": {
+            "types": "./src/modules/receipts/index.ts",
+            "require": "./src/modules/receipts/index.ts",
+            "import": "./src/modules/receipts/index.ts"
+        },
+        "./ai/gemini": {
+            "types": "./src/ai/gemini/index.ts",
+            "require": "./src/ai/gemini/index.ts",
+            "import": "./src/ai/gemini/index.ts"
+        },
+        "./ai/mistral": {
+            "types": "./src/ai/mistral/index.ts",
+            "require": "./src/ai/mistral/index.ts",
+            "import": "./src/ai/mistral/index.ts"
         }
     },
     "scripts": {
@@ -17,6 +37,8 @@
         "check-types": "tsc --noEmit"
     },
     "dependencies": {
+        "@google/generative-ai": "^0.24.1",
+        "@mistralai/mistralai": "^1.10.0",
         "@repo/database": "workspace:*"
     },
     "devDependencies": {

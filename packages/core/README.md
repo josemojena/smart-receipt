@@ -23,18 +23,16 @@ Repository pattern for receipt data access.
 **Usage:**
 
 ```typescript
-import { ReceiptsRepository } from '@repo/core';
-
-const receiptsRepo = new ReceiptsRepository();
+import { receiptsRepository } from '@repo/core';
 
 // Find all receipts for a user
-const receipts = await receiptsRepo.findAll({ userId: 'user123' });
+const receipts = await receiptsRepository.findAll({ userId: 'user123' });
 
 // Find by ID
-const receipt = await receiptsRepo.findById('receipt-id');
+const receipt = await receiptsRepository.findById('receipt-id');
 
 // Create a receipt
-const newReceipt = await receiptsRepo.create({
+const newReceipt = await receiptsRepository.create({
   userId: 'user123',
   documentHash: 'hash',
   aiModel: 'gemini-1.5',
@@ -44,17 +42,17 @@ const newReceipt = await receiptsRepo.create({
 });
 
 // Update a receipt
-await receiptsRepo.update('receipt-id', {
+await receiptsRepository.update('receipt-id', {
   data: {
     // Updated ReceiptData
   },
 });
 
 // Delete a receipt
-await receiptsRepo.delete('receipt-id');
+await receiptsRepository.delete('receipt-id');
 
 // Count receipts
-const count = await receiptsRepo.count({ userId: 'user123' });
+const count = await receiptsRepository.count({ userId: 'user123' });
 ```
 
 **Available Methods:**
