@@ -16,8 +16,8 @@ class DashboardTicketList extends StatelessWidget {
         return Padding(
           padding: const EdgeInsets.only(bottom: 12),
           child: InkWell(
-            onTap: () {
-              context.push('/ticket/${ticket.id}');
+            onTap: () async {
+              await context.push('/ticket/${ticket.id}');
             },
             borderRadius: BorderRadius.circular(12),
             child: Card(
@@ -39,7 +39,7 @@ class DashboardTicketList extends StatelessWidget {
                           ),
                           const SizedBox(height: 6),
                           Text(
-                            '${ticket.date.day} de ${ticket.date.month}, ${ticket.totalItems} items',
+                            _formatTicketInfo(ticket),
                             style: textTheme.bodySmall?.copyWith(
                               color: colorScheme.onSurfaceVariant,
                             ),
@@ -62,5 +62,49 @@ class DashboardTicketList extends StatelessWidget {
         );
       }).toList(),
     );
+  }
+
+  String _formatTicketInfo(Ticket ticket) {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final ticketDay = DateTime(
+      ticket.date.year,
+      ticket.date.month,
+      ticket.date.day,
+    );
+    final difference = today.difference(ticketDay).inDays;
+
+    String dateText;
+    if (difference == 0) {
+      dateText = 'Hoy';
+    } else if (difference == 1) {
+      dateText = 'Ayer';
+    } else if (difference < 7) {
+      dateText = 'Hace $difference días';
+    } else {
+      // Formato manual: "24 Nov 2024"
+      const months = [
+        'Ene',
+        'Feb',
+        'Mar',
+        'Abr',
+        'May',
+        'Jun',
+        'Jul',
+        'Ago',
+        'Sep',
+        'Oct',
+        'Nov',
+        'Dic',
+      ];
+      dateText =
+          '${ticket.date.day} ${months[ticket.date.month - 1]} ${ticket.date.year}';
+    }
+
+    if (ticket.time != null && ticket.time!.isNotEmpty) {
+      return '$dateText • ${ticket.time} • ${ticket.totalItems} items';
+    }
+
+    return '$dateText • ${ticket.totalItems} items';
   }
 }

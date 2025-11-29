@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Ticket {
 
- int get id; String get storeName; DateTime get date; List<Product> get products;
+ String get id; String get storeName; DateTime get date; List<Product> get products; String? get transactionId; String? get time; double? get finalTotal; Map<String, double> get taxBreakdown;
 /// Create a copy of Ticket
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $TicketCopyWith<Ticket> get copyWith => _$TicketCopyWithImpl<Ticket>(this as Tic
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Ticket&&(identical(other.id, id) || other.id == id)&&(identical(other.storeName, storeName) || other.storeName == storeName)&&(identical(other.date, date) || other.date == date)&&const DeepCollectionEquality().equals(other.products, products));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Ticket&&(identical(other.id, id) || other.id == id)&&(identical(other.storeName, storeName) || other.storeName == storeName)&&(identical(other.date, date) || other.date == date)&&const DeepCollectionEquality().equals(other.products, products)&&(identical(other.transactionId, transactionId) || other.transactionId == transactionId)&&(identical(other.time, time) || other.time == time)&&(identical(other.finalTotal, finalTotal) || other.finalTotal == finalTotal)&&const DeepCollectionEquality().equals(other.taxBreakdown, taxBreakdown));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,storeName,date,const DeepCollectionEquality().hash(products));
+int get hashCode => Object.hash(runtimeType,id,storeName,date,const DeepCollectionEquality().hash(products),transactionId,time,finalTotal,const DeepCollectionEquality().hash(taxBreakdown));
 
 @override
 String toString() {
-  return 'Ticket(id: $id, storeName: $storeName, date: $date, products: $products)';
+  return 'Ticket(id: $id, storeName: $storeName, date: $date, products: $products, transactionId: $transactionId, time: $time, finalTotal: $finalTotal, taxBreakdown: $taxBreakdown)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $TicketCopyWith<$Res>  {
   factory $TicketCopyWith(Ticket value, $Res Function(Ticket) _then) = _$TicketCopyWithImpl;
 @useResult
 $Res call({
- int id, String storeName, DateTime date, List<Product> products
+ String id, String storeName, DateTime date, List<Product> products, String? transactionId, String? time, double? finalTotal, Map<String, double> taxBreakdown
 });
 
 
@@ -65,13 +65,17 @@ class _$TicketCopyWithImpl<$Res>
 
 /// Create a copy of Ticket
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? storeName = null,Object? date = null,Object? products = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? storeName = null,Object? date = null,Object? products = null,Object? transactionId = freezed,Object? time = freezed,Object? finalTotal = freezed,Object? taxBreakdown = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as int,storeName: null == storeName ? _self.storeName : storeName // ignore: cast_nullable_to_non_nullable
+as String,storeName: null == storeName ? _self.storeName : storeName // ignore: cast_nullable_to_non_nullable
 as String,date: null == date ? _self.date : date // ignore: cast_nullable_to_non_nullable
 as DateTime,products: null == products ? _self.products : products // ignore: cast_nullable_to_non_nullable
-as List<Product>,
+as List<Product>,transactionId: freezed == transactionId ? _self.transactionId : transactionId // ignore: cast_nullable_to_non_nullable
+as String?,time: freezed == time ? _self.time : time // ignore: cast_nullable_to_non_nullable
+as String?,finalTotal: freezed == finalTotal ? _self.finalTotal : finalTotal // ignore: cast_nullable_to_non_nullable
+as double?,taxBreakdown: null == taxBreakdown ? _self.taxBreakdown : taxBreakdown // ignore: cast_nullable_to_non_nullable
+as Map<String, double>,
   ));
 }
 
@@ -153,10 +157,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id,  String storeName,  DateTime date,  List<Product> products)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String storeName,  DateTime date,  List<Product> products,  String? transactionId,  String? time,  double? finalTotal,  Map<String, double> taxBreakdown)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Ticket() when $default != null:
-return $default(_that.id,_that.storeName,_that.date,_that.products);case _:
+return $default(_that.id,_that.storeName,_that.date,_that.products,_that.transactionId,_that.time,_that.finalTotal,_that.taxBreakdown);case _:
   return orElse();
 
 }
@@ -174,10 +178,10 @@ return $default(_that.id,_that.storeName,_that.date,_that.products);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  String storeName,  DateTime date,  List<Product> products)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String storeName,  DateTime date,  List<Product> products,  String? transactionId,  String? time,  double? finalTotal,  Map<String, double> taxBreakdown)  $default,) {final _that = this;
 switch (_that) {
 case _Ticket():
-return $default(_that.id,_that.storeName,_that.date,_that.products);}
+return $default(_that.id,_that.storeName,_that.date,_that.products,_that.transactionId,_that.time,_that.finalTotal,_that.taxBreakdown);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -191,10 +195,10 @@ return $default(_that.id,_that.storeName,_that.date,_that.products);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id,  String storeName,  DateTime date,  List<Product> products)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String storeName,  DateTime date,  List<Product> products,  String? transactionId,  String? time,  double? finalTotal,  Map<String, double> taxBreakdown)?  $default,) {final _that = this;
 switch (_that) {
 case _Ticket() when $default != null:
-return $default(_that.id,_that.storeName,_that.date,_that.products);case _:
+return $default(_that.id,_that.storeName,_that.date,_that.products,_that.transactionId,_that.time,_that.finalTotal,_that.taxBreakdown);case _:
   return null;
 
 }
@@ -206,10 +210,10 @@ return $default(_that.id,_that.storeName,_that.date,_that.products);case _:
 @JsonSerializable()
 
 class _Ticket implements Ticket {
-  const _Ticket({required this.id, required this.storeName, required this.date, required final  List<Product> products}): _products = products;
+  const _Ticket({required this.id, required this.storeName, required this.date, required final  List<Product> products, this.transactionId, this.time, this.finalTotal, final  Map<String, double> taxBreakdown = const {}}): _products = products,_taxBreakdown = taxBreakdown;
   factory _Ticket.fromJson(Map<String, dynamic> json) => _$TicketFromJson(json);
 
-@override final  int id;
+@override final  String id;
 @override final  String storeName;
 @override final  DateTime date;
  final  List<Product> _products;
@@ -217,6 +221,16 @@ class _Ticket implements Ticket {
   if (_products is EqualUnmodifiableListView) return _products;
   // ignore: implicit_dynamic_type
   return EqualUnmodifiableListView(_products);
+}
+
+@override final  String? transactionId;
+@override final  String? time;
+@override final  double? finalTotal;
+ final  Map<String, double> _taxBreakdown;
+@override@JsonKey() Map<String, double> get taxBreakdown {
+  if (_taxBreakdown is EqualUnmodifiableMapView) return _taxBreakdown;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableMapView(_taxBreakdown);
 }
 
 
@@ -233,16 +247,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Ticket&&(identical(other.id, id) || other.id == id)&&(identical(other.storeName, storeName) || other.storeName == storeName)&&(identical(other.date, date) || other.date == date)&&const DeepCollectionEquality().equals(other._products, _products));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Ticket&&(identical(other.id, id) || other.id == id)&&(identical(other.storeName, storeName) || other.storeName == storeName)&&(identical(other.date, date) || other.date == date)&&const DeepCollectionEquality().equals(other._products, _products)&&(identical(other.transactionId, transactionId) || other.transactionId == transactionId)&&(identical(other.time, time) || other.time == time)&&(identical(other.finalTotal, finalTotal) || other.finalTotal == finalTotal)&&const DeepCollectionEquality().equals(other._taxBreakdown, _taxBreakdown));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,storeName,date,const DeepCollectionEquality().hash(_products));
+int get hashCode => Object.hash(runtimeType,id,storeName,date,const DeepCollectionEquality().hash(_products),transactionId,time,finalTotal,const DeepCollectionEquality().hash(_taxBreakdown));
 
 @override
 String toString() {
-  return 'Ticket(id: $id, storeName: $storeName, date: $date, products: $products)';
+  return 'Ticket(id: $id, storeName: $storeName, date: $date, products: $products, transactionId: $transactionId, time: $time, finalTotal: $finalTotal, taxBreakdown: $taxBreakdown)';
 }
 
 
@@ -253,7 +267,7 @@ abstract mixin class _$TicketCopyWith<$Res> implements $TicketCopyWith<$Res> {
   factory _$TicketCopyWith(_Ticket value, $Res Function(_Ticket) _then) = __$TicketCopyWithImpl;
 @override @useResult
 $Res call({
- int id, String storeName, DateTime date, List<Product> products
+ String id, String storeName, DateTime date, List<Product> products, String? transactionId, String? time, double? finalTotal, Map<String, double> taxBreakdown
 });
 
 
@@ -270,13 +284,17 @@ class __$TicketCopyWithImpl<$Res>
 
 /// Create a copy of Ticket
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? storeName = null,Object? date = null,Object? products = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? storeName = null,Object? date = null,Object? products = null,Object? transactionId = freezed,Object? time = freezed,Object? finalTotal = freezed,Object? taxBreakdown = null,}) {
   return _then(_Ticket(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as int,storeName: null == storeName ? _self.storeName : storeName // ignore: cast_nullable_to_non_nullable
+as String,storeName: null == storeName ? _self.storeName : storeName // ignore: cast_nullable_to_non_nullable
 as String,date: null == date ? _self.date : date // ignore: cast_nullable_to_non_nullable
 as DateTime,products: null == products ? _self._products : products // ignore: cast_nullable_to_non_nullable
-as List<Product>,
+as List<Product>,transactionId: freezed == transactionId ? _self.transactionId : transactionId // ignore: cast_nullable_to_non_nullable
+as String?,time: freezed == time ? _self.time : time // ignore: cast_nullable_to_non_nullable
+as String?,finalTotal: freezed == finalTotal ? _self.finalTotal : finalTotal // ignore: cast_nullable_to_non_nullable
+as double?,taxBreakdown: null == taxBreakdown ? _self._taxBreakdown : taxBreakdown // ignore: cast_nullable_to_non_nullable
+as Map<String, double>,
   ));
 }
 

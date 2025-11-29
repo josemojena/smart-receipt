@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:smart_receipt_mobile/shared/models/ticket_processing_response.dart';
 
 abstract class ScanState extends Equatable {
   const ScanState();
@@ -33,27 +34,29 @@ class ScanError extends ScanState {
   List<Object> get props => [message];
 }
 
-class ScanUploading extends ScanState {
-  const ScanUploading({
+class ScanProcessing extends ScanState {
+  const ScanProcessing({
     required this.imagePath,
     this.progress = 0,
+    this.isProcessing = false,
   });
 
   final String imagePath;
   final double progress;
+  final bool isProcessing;
 
   @override
-  List<Object> get props => [imagePath, progress];
+  List<Object> get props => [imagePath, progress, isProcessing];
 }
 
-class ScanUploadSuccess extends ScanState {
-  const ScanUploadSuccess({
+class ScanProcessSuccess extends ScanState {
+  const ScanProcessSuccess({
     required this.imagePath,
     required this.response,
   });
 
   final String imagePath;
-  final Map<String, dynamic> response;
+  final TicketProcessingResponse response;
 
   @override
   List<Object> get props => [imagePath, response];

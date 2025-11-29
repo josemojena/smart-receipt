@@ -1,42 +1,19 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get_it/get_it.dart';
 import 'package:smart_receipt_mobile/features/dashboard/bloc/dashboard_event.dart';
 import 'package:smart_receipt_mobile/features/dashboard/bloc/dashboard_state.dart';
+import 'package:smart_receipt_mobile/features/history/repositories/tickets_repository.dart';
 import 'package:smart_receipt_mobile/shared/models/models.dart';
 
 class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
-  // Mock data - En el futuro esto vendrá de un repositorio
-  List<Ticket> _tickets = [
-    Ticket(
-      id: 1,
-      storeName: 'Supermercado Local',
-      date: DateTime(2024, 9, 20),
-      products: const [
-        Product(name: 'Leche Entera (1L)', unitPrice: 1.25, quantity: 2),
-        Product(
-          name: 'Carne Picada de Res (500g)',
-          unitPrice: 7.99,
-          quantity: 1,
-        ),
-        Product(
-          name: 'Papel Higiénico (8 rollos)',
-          unitPrice: 4.50,
-          quantity: 1,
-        ),
-        Product(name: 'Manzanas Golden (kg)', unitPrice: 2.10, quantity: 1),
-      ],
-    ),
-    Ticket(
-      id: 2,
-      storeName: 'Farmacia Cruz Azul',
-      date: DateTime(2024, 9, 19),
-      products: const [
-        Product(name: 'Paracetamol 500mg', unitPrice: 3.50, quantity: 1),
-        Product(name: 'Vitamina C (30 tabs)', unitPrice: 9, quantity: 1),
-      ],
-    ),
-  ];
+  final TicketsRepository _ticketsRepository;
+  List<Ticket> _tickets = [];
 
-  DashboardBloc() : super(const DashboardInitial()) {
+  DashboardBloc({
+    TicketsRepository? ticketsRepository,
+  }) : _ticketsRepository =
+           ticketsRepository ?? GetIt.instance<TicketsRepository>(),
+       super(const DashboardInitial()) {
     on<DashboardLoadTickets>(_onLoadTickets);
     on<DashboardScanTicket>(_onScanTicket);
     on<DashboardDeleteTicket>(_onDeleteTicket);
@@ -48,10 +25,37 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
   ) async {
     emit(const DashboardLoading());
 
-    // Simular carga asíncrona
-    await Future<void>.delayed(const Duration(milliseconds: 500));
+    final result = await _ticketsRepository.getTickets();
 
-    _updateState(emit);
+    result.fold(
+      // Left: Failure
+      (failure) {
+        emit(
+          DashboardError(_getFailureMessage(failure)),
+        );
+      },
+      // Right: Success
+      (tickets) {
+        _tickets = tickets;
+        _updateState(emit);
+      },
+    );
+  }
+
+  String _getFailureMessage(Failure failure) {
+    return failure.when(
+      network: (message, statusCode) =>
+          'Error de conexión: $message${statusCode != null ? ' (Código: $statusCode)' : ''}',
+      server: (message, statusCode, errorData) =>
+          'Error del servidor ($statusCode): $message',
+      validation: (message, errors) {
+        final errorsText = errors != null && errors.isNotEmpty
+            ? '\n${errors.join('\n')}'
+            : '';
+        return 'Error de validación: $message$errorsText';
+      },
+      unknown: (message, error) => 'Error desconocido: $message',
+    );
   }
 
   Future<void> _onScanTicket(
@@ -87,7 +91,7 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
   }
 
   // Método para obtener un ticket por ID (para el router)
-  Ticket? getTicketById(int id) {
+  Ticket? getTicketById(String id) {
     try {
       return _tickets.firstWhere((ticket) => ticket.id == id);
     } catch (e) {

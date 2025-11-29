@@ -36,8 +36,13 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
     return '${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
   }
 
-  String _formatTransactionId(int id) {
-    return 'T${id.toString().padLeft(3, '0')}';
+  String _formatTransactionId(String id) {
+    // Try to parse as int for formatting, otherwise use as-is
+    final intId = int.tryParse(id);
+    if (intId != null) {
+      return 'T${intId.toString().padLeft(3, '0')}';
+    }
+    return id; // Return as-is if not a number
   }
 
   void _onProductSelectionChanged(Product product, bool isSelected) {
@@ -106,7 +111,6 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    // Sección delimitada con información de la transacción
                     SizedBox(
                       width: double.infinity,
                       child: Container(
@@ -125,7 +129,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                             // Total grande en verde
                             Text(
                               '€${widget.ticket.totalSpent.toStringAsFixed(2)}',
-                              style: textTheme.displayLarge?.copyWith(
+                              style: textTheme.displayMedium?.copyWith(
                                 fontWeight: FontWeight.bold,
                                 color: colorScheme.primary,
                               ),
@@ -157,34 +161,9 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 32),
-
-                    // Header de productos
-                    Text(
-                      'Detalle de Productos (${widget.ticket.products.length})',
-                      style: textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.w600,
-                        color: colorScheme.onSurface,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-
-                    // Lista de Productos
-                    Column(
-                      children: widget.ticket.products
-                          .map(
-                            (product) => TicketProductItem(
-                              product: product,
-                              isSelected: product == _selectedProduct,
-                              onSelectionChanged: _onProductSelectionChanged,
-                            ),
-                          )
-                          .toList(),
-                    ),
-
                     const SizedBox(height: 24),
 
-                    // Botón de Analizar (producto seleccionado)
+                    // Botón de Analizar (producto seleccionado) - Movido arriba para mejor visibilidad
                     if (widget.ticket.products.isNotEmpty)
                       SizedBox(
                         width: double.infinity,
@@ -223,6 +202,30 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                           ),
                         ),
                       ),
+                    const SizedBox(height: 32),
+
+                    // Header de productos
+                    Text(
+                      'Detalle de Productos (${widget.ticket.products.length})',
+                      style: textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: colorScheme.onSurface,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Lista de Productos
+                    Column(
+                      children: widget.ticket.products
+                          .map(
+                            (product) => TicketProductItem(
+                              product: product,
+                              isSelected: product == _selectedProduct,
+                              onSelectionChanged: _onProductSelectionChanged,
+                            ),
+                          )
+                          .toList(),
+                    ),
                   ],
                 ),
               ]),

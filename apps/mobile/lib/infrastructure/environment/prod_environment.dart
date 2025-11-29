@@ -4,7 +4,7 @@ class ProdEnvironment extends AppEnvironment {
   const ProdEnvironment()
     : super(
         name: 'prod',
-        apiUrl: 'https://api.smartreceipt.com',
+        apiUrl: 'http://localhost:3001',
         authToken: '',
       );
 }

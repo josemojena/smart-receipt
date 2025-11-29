@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
+import 'package:smart_receipt_mobile/features/history/repositories/tickets_repository.dart';
 import 'package:smart_receipt_mobile/infrastructure/environment/app_environment.dart';
 import 'package:smart_receipt_mobile/infrastructure/environment/dev_environment.dart';
 import 'package:smart_receipt_mobile/infrastructure/environment/prod_environment.dart';
@@ -13,9 +14,7 @@ final GetIt getIt = GetIt.instance;
 Future<void> setupDependencyInjection({
   bool isProduction = false,
 }) async {
-  final environment = isProduction
-      ? const ProdEnvironment()
-      : const DevEnvironment();
+  final environment = isProduction ? const ProdEnvironment() : DevEnvironment();
   getIt.registerSingleton<AppEnvironment>(environment);
 
   final dio = DioProvider.initializeDio(environment);
@@ -25,6 +24,8 @@ Future<void> setupDependencyInjection({
     ImageUploadService(dio),
   );
 
-  // TODO: Register repositories here
-  // getIt.registerSingleton<TicketRepository>(TicketRepository(getIt<Dio>()));
+  // Register repositories
+  getIt.registerSingleton<TicketsRepository>(
+    TicketsRepository(dio),
+  );
 }

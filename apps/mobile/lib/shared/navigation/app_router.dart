@@ -52,7 +52,7 @@ class AppRouter {
       GoRoute(
         path: '/ticket/:id',
         builder: (context, state) {
-          final ticketId = int.tryParse(state.pathParameters['id'] ?? '0') ?? 0;
+          final ticketId = state.pathParameters['id'] ?? '';
 
           final dashboardBloc = context.read<DashboardBloc>();
           final ticket = dashboardBloc.getTicketById(ticketId);

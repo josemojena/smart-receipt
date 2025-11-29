@@ -16,7 +16,7 @@ class DashboardScanTicket extends DashboardEvent {
 }
 
 class DashboardDeleteTicket extends DashboardEvent {
-  final int ticketId;
+  final String ticketId;
 
   const DashboardDeleteTicket(this.ticketId);
 

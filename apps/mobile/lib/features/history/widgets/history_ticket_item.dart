@@ -14,8 +14,13 @@ class HistoryTicketItem extends StatelessWidget {
     return '${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
   }
 
-  String _formatTransactionId(int id) {
-    return 'T${id.toString().padLeft(3, '0')}';
+  String _formatTransactionId(String id) {
+    // Try to parse as int for formatting, otherwise use as-is
+    final intId = int.tryParse(id);
+    if (intId != null) {
+      return 'T${intId.toString().padLeft(3, '0')}';
+    }
+    return id; // Return as-is if not a number
   }
 
   @override

@@ -89,14 +89,52 @@ class DashboardScreen extends StatelessWidget {
                     },
                   ),
                   const SizedBox(height: 24),
-                  Text(
-                    'Tickets Recientes',
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
+                  // Header con título e icono
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Últimas facturas ...',
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      Icon(
+                        Icons.receipt_long,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 16),
-                  DashboardTicketList(tickets: state.tickets),
+                  // Mostrar solo los primeros 2 tickets
+                  DashboardTicketList(
+                    tickets: state.tickets.take(2).toList(),
+                  ),
+                  const SizedBox(height: 12),
+                  // Link para ver todas las transacciones
+                  InkWell(
+                    onTap: () {
+                      context.go('/history');
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Ver todas las transacciones',
+                          style: Theme.of(context).textTheme.bodyMedium
+                              ?.copyWith(
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                        ),
+                        const SizedBox(width: 4),
+                        Icon(
+                          Icons.arrow_forward,
+                          size: 16,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             );
