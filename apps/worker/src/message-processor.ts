@@ -1,5 +1,6 @@
 import { ConsumeMessage } from "amqplib";
 import { prisma } from "@repo/database";
+import { logger } from "./utils/logger.js";
 import { downloadFromS3 } from "./services/s3.service.js";
 import { validateTicketProcessingMessage } from "./validators/message.validator.js";
 import {
@@ -17,18 +18,20 @@ export async function processMessage(msg: ConsumeMessage): Promise<void> {
     try {
         const content = msg.content.toString();
         const rawPayload = JSON.parse(content);
-
         // Validate message structure with Zod
         const payload = validateTicketProcessingMessage(rawPayload);
         ticketId = payload.id;
 
-        console.log(`📨 Processing message:`, {
-            id: payload.id,
-            url: payload.url,
-        });
+        logger.info(
+            {
+                ticketId: payload.id,
+                url: payload.url,
+            },
+            "Processing message"
+        );
 
         // Download file from S3
-        console.log(`📥 Downloading file from S3: ${payload.url}`);
+        logger.debug({ url: payload.url }, "Downloading file from S3");
         const downloadResult = await downloadFromS3(payload.url);
 
         if (!downloadResult.success || !downloadResult.buffer) {
@@ -39,15 +42,21 @@ export async function processMessage(msg: ConsumeMessage): Promise<void> {
             );
         }
 
-        console.log(`✅ File downloaded: ${downloadResult.buffer.length} bytes`);
-        console.log(`   Content-Type: ${downloadResult.contentType || "unknown"}`);
+        logger.info(
+            {
+                ticketId: payload.id,
+                size: downloadResult.buffer.length,
+                contentType: downloadResult.contentType || "unknown",
+            },
+            "File downloaded from S3"
+        );
 
         // Extract filename from URL
         const urlParts = payload.url.split("/");
         const filename = urlParts[urlParts.length - 1] || "unknown";
 
         // Process ticket image with Gemini OCR
-        console.log(`🔄 Processing ticket image with Gemini OCR...`);
+        logger.debug({ ticketId: payload.id }, "Processing ticket image with Gemini OCR");
         const mimeType = downloadResult.contentType || "image/jpeg";
         const extractionResult = await processTicketImage(
             downloadResult.buffer,
@@ -62,12 +71,14 @@ export async function processMessage(msg: ConsumeMessage): Promise<void> {
             );
         }
 
-        console.log(`✅ Ticket data extracted successfully`);
-        console.log(`   Store: ${extractionResult.data.store || "N/A"}`);
-        console.log(`   Total: ${extractionResult.data.final_total || "N/A"}`);
-
-        // Save ticket data to database
-        console.log(`💾 Saving ticket to database...`);
+        logger.info(
+            {
+                ticketId: payload.id,
+                store: extractionResult.data.store || "N/A",
+                total: extractionResult.data.final_total || "N/A",
+            },
+            "Ticket data extracted successfully"
+        );
         const saveResult = await saveTicketToDatabase({
             ticketData: extractionResult.data,
             s3Url: payload.url,
@@ -85,11 +96,21 @@ export async function processMessage(msg: ConsumeMessage): Promise<void> {
         // Now update the ticket processing status to completed
         await updateTicketStatus(payload.id, "completed");
 
-        console.log(`✅ Ticket processed and saved to database: ${payload.id}`);
-        console.log(`   Receipt ID: ${saveResult.receiptId}`);
-        console.log(`   Status updated to: completed`);
+        logger.info(
+            {
+                ticketId: payload.id,
+                receiptId: saveResult.receiptId,
+            },
+            "Ticket processed and saved to database"
+        );
     } catch (error) {
-        console.error("❌ Error processing message:", error);
+        logger.error(
+            {
+                error,
+                ticketId,
+            },
+            "Error processing message"
+        );
 
         // Try to update status to failed if we have the ticket ID
         if (ticketId) {
@@ -102,7 +123,10 @@ export async function processMessage(msg: ConsumeMessage): Promise<void> {
                 const payload = validateTicketProcessingMessage(rawPayload);
                 await updateTicketStatus(payload.id, "failed");
             } catch (updateError) {
-                console.error("   Failed to extract ticket ID and update status:", updateError);
+                logger.error(
+                    { error: updateError },
+                    "Failed to extract ticket ID and update status"
+                );
             }
         }
 
@@ -124,9 +148,12 @@ async function updateTicketStatus(
             where: { id: ticketId },
             data: { status },
         });
-        console.log(`   ✓ Status updated to: ${status}`);
+        logger.debug({ ticketId, status }, "Status updated");
     } catch (error) {
-        console.error(`   ✗ Failed to update status to ${status}:`, error);
+        logger.error(
+            { error, ticketId, status },
+            "Failed to update status"
+        );
         // Don't throw - we don't want status update failures to break the flow
     }
 }

@@ -3,16 +3,16 @@
 import "dotenv/config";
 import { randomUUID } from "crypto";
 import amqp from "amqplib";
+import { logger } from "./utils/logger.js";
+import { env } from "./config/env.js";
 import type { TicketProcessingMessage } from "./validators/message.validator.js";
 
-const RABBITMQ_URL =
-    process.env.RABBITMQ_URL || "amqp://admin:admin123@localhost:5672/";
-const QUEUE_NAME = process.env.QUEUE_NAME || "smartticket_dev_queue";
+const RABBITMQ_URL = env.RABBITMQ_URL;
+const QUEUE_NAME = env.QUEUE_NAME;
 
 async function main(): Promise<void> {
     try {
-        console.log("📤 Sending test message...");
-        console.log(`📋 Queue: ${QUEUE_NAME}\n`);
+        logger.info({ queue: QUEUE_NAME }, "Sending test messages");
 
         // Connect to RabbitMQ
         const conn = await amqp.connect(RABBITMQ_URL);
@@ -23,7 +23,7 @@ async function main(): Promise<void> {
             durable: true,
         });
 
-        console.log(`✅ Connected to RabbitMQ\n`);
+        logger.info("Connected to RabbitMQ");
         const total = 100;
         let count = 0;
 
@@ -36,16 +36,25 @@ async function main(): Promise<void> {
 
             const message = JSON.stringify(payload);
 
-            // Send message
+            // Send message with initial retry count
             await channel.sendToQueue(QUEUE_NAME, Buffer.from(message), {
                 persistent: true,
                 messageId: payload.id,
                 contentType: "application/json",
+                headers: {
+                    "x-retries": 0,
+                },
             });
 
-            console.log(`✅ Message sent!`);
-            console.log(`   ID: ${payload.id}`);
-            console.log(`   URL: ${payload.url}`);
+            logger.debug(
+                {
+                    messageId: payload.id,
+                    url: payload.url,
+                    count: count + 1,
+                    total,
+                },
+                "Message sent"
+            );
             count++;
 
             //wait 1 second
@@ -56,15 +65,15 @@ async function main(): Promise<void> {
         await channel.close();
         await conn.close();
 
-        console.log("\n👋 Done");
+        logger.info({ total }, "All messages sent");
         process.exit(0);
     } catch (error) {
-        console.error("❌ Error:", error);
+        logger.error({ error }, "Error sending messages");
         process.exit(1);
     }
 }
 
 main().catch((error) => {
-    console.error("❌ Unhandled error:", error);
+    logger.fatal({ error }, "Unhandled error");
     process.exit(1);
 });

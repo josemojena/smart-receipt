@@ -44,11 +44,9 @@
         "RABBITMQ_URL",
         "QUEUE_NAME",
         "WORKER_CONCURRENCY",
-        "DO_SPACES_ENDPOINT",
-        "DO_SPACES_REGION",
-        "DO_SPACES_KEY",
-        "DO_SPACES_SECRET",
-        "DO_SPACES_BUCKET"
+        "MAX_RETRIES",
+        "RETRY_DELAY_MS",
+        "LOG_LEVEL"
       ]
     }
   }

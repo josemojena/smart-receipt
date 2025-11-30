@@ -10,16 +10,11 @@ import {
 } from "../validators/ticket.validator.js";
 import { createHash } from "crypto";
 import { receiptsRepository } from "@repo/core/modules/receipts/repositories";
-
-if (!process.env.GEMINI_API_KEY) {
-    throw new Error("GEMINI_API_KEY environment variable is required");
-}
+import { logger } from "../utils/logger.js";
+import { env } from "../config/env.js";
 
 // Initialize Gemini client
-const geminiClient = new GeminiClient(
-    process.env.GEMINI_API_KEY,
-    "gemini-2.5-flash"
-);
+const geminiClient = new GeminiClient(env.GEMINI_API_KEY, "gemini-2.5-flash");
 
 /**
  * Normalizes ticket data fields to match expected formats
@@ -358,13 +353,23 @@ export async function saveTicketToDatabase(
             ],
         });
 
-        console.log(`💾 Receipt saved to database: ${savedReceipt.id}`);
+        logger.info(
+            {
+                receiptId: savedReceipt.id,
+            },
+            "Receipt saved to database"
+        );
         return {
             success: true,
             receiptId: savedReceipt.id,
         };
     } catch (dbError) {
-        console.error("❌ Error saving receipt to database:", dbError);
+        logger.error(
+            {
+                error: dbError,
+            },
+            "Error saving receipt to database"
+        );
         return {
             success: false,
             error:
