@@ -13,6 +13,12 @@ export const TicketProcessingMessageSchema = z.object({
      * S3 URL where the ticket image is stored
      */
     url: z.string().url("URL must be a valid URL"),
+
+    /**
+     * Origin of the ticket processing request
+     * Indicates where the ticket was submitted from
+     */
+    origin: z.enum(["cli", "web", "app"]),
 });
 
 /**

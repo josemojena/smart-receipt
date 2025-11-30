@@ -174,10 +174,23 @@ fastify.post('/process-ticket', async (request, reply) => {
       },
     });
 
+    // Get origin from query parameter or default to "web"
+    // Origin can be: "cli", "web", "app"
+    const origin = (request.query as { origin?: string })?.origin || "web";
+
+    // Validate origin
+    if (!["cli", "web", "app"].includes(origin)) {
+      return reply.code(400).send({
+        error: 'Invalid origin',
+        message: 'Origin must be one of: "cli", "web", "app"',
+      });
+    }
+
     // Send message to RabbitMQ queue for processing with the MongoDB ObjectId
     await sendTicketProcessingMessage({
       id: ticketMessage.id,
       url: ticketMessage.url,
+      origin: origin as "cli" | "web" | "app",
     });
 
     return reply.code(202).send({

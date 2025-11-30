@@ -6,4 +6,3 @@
  * This file is kept for backward compatibility
  */
 export type { TicketProcessingMessage } from "../validators/message.validator.js";
-

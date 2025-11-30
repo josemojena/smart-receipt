@@ -53,11 +53,14 @@ model Receipt {
 }
 
 model TicketProcessingMessage {
-    id        String   @id @default(auto()) @map("_id") @db.ObjectId
-    url       String
-    status    String   @default("pending")
-    createdAt DateTime @default(now()) @map("created_at")
-    updatedAt DateTime @updatedAt @map("updated_at")
+    id         String    @id @default(auto()) @map("_id") @db.ObjectId
+    url        String
+    status     String    @default("pending")
+    createdAt  DateTime  @default(now()) @map("created_at")
+    updatedAt  DateTime  @updatedAt @map("updated_at")
+    lockedAt   DateTime? @map("locked_at")
+    finishedAt DateTime? @map("finished_at")
+    failedAt   DateTime? @map("failed_at")
 
     @@index([id])
     @@map("ticket_processing_message")

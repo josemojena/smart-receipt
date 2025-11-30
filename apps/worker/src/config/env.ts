@@ -6,11 +6,11 @@ import { logger } from "../utils/logger.js";
  * @throws {Error} If the environment variable is missing
  */
 function requireEnv(name: string): string {
-    const value = process.env[name];
-    if (!value) {
-        throw new Error(`Missing environment variable: ${name}`);
-    }
-    return value;
+  const value = process.env[name];
+  if (!value) {
+    throw new Error(`Missing environment variable: ${name}`);
+  }
+  return value;
 }
 
 /**
@@ -18,14 +18,12 @@ function requireEnv(name: string): string {
  * @throws {Error} If the environment variable is missing or invalid
  */
 function requireIntEnv(name: string): number {
-    const value = requireEnv(name);
-    const parsed = parseInt(value, 10);
-    if (isNaN(parsed) || parsed <= 0) {
-        throw new Error(
-            `${name} must be a positive integer, got: ${value}`
-        );
-    }
-    return parsed;
+  const value = requireEnv(name);
+  const parsed = parseInt(value, 10);
+  if (isNaN(parsed) || parsed <= 0) {
+    throw new Error(`${name} must be a positive integer, got: ${value}`);
+  }
+  return parsed;
 }
 
 /**
@@ -33,13 +31,13 @@ function requireIntEnv(name: string): number {
  * @throws {Error} If the environment variable is missing or invalid
  */
 function requireUrlEnv(name: string): string {
-    const value = requireEnv(name);
-    try {
-        new URL(value);
-        return value;
-    } catch {
-        throw new Error(`${name} must be a valid URL, got: ${value}`);
-    }
+  const value = requireEnv(name);
+  try {
+    new URL(value);
+    return value;
+  } catch {
+    throw new Error(`${name} must be a valid URL, got: ${value}`);
+  }
 }
 
 /**
@@ -47,48 +45,55 @@ function requireUrlEnv(name: string): string {
  * This object is initialized once at module load time
  */
 function validateAndCreateEnv() {
-    try {
-        const env = {
-            // RabbitMQ Configuration
-            RABBITMQ_URL: requireUrlEnv("RABBITMQ_URL"),
-            QUEUE_NAME: requireEnv("QUEUE_NAME"),
+  try {
+    const env = {
+      // RabbitMQ Configuration
+      RABBITMQ_URL: requireUrlEnv("RABBITMQ_URL"),
+      QUEUE_NAME: requireEnv("QUEUE_NAME"),
 
-            // Worker Configuration
-            WORKER_CONCURRENCY: requireIntEnv("WORKER_CONCURRENCY"),
+      // Worker Configuration
+      WORKER_CONCURRENCY: requireIntEnv("WORKER_CONCURRENCY"),
 
-            // Dead Letter Queue Configuration
-            MAX_RETRIES: requireIntEnv("MAX_RETRIES"),
-            RETRY_DELAY_MS: requireIntEnv("RETRY_DELAY_MS"),
+      // Dead Letter Queue Configuration
+      MAX_RETRIES: requireIntEnv("MAX_RETRIES"),
+      RETRY_DELAY_MS: requireIntEnv("RETRY_DELAY_MS"),
 
-            // S3/Digital Ocean Spaces Configuration
-            DO_SPACES_ENDPOINT: requireUrlEnv("DO_SPACES_ENDPOINT"),
-            DO_SPACES_REGION: requireEnv("DO_SPACES_REGION"),
-            DO_SPACES_KEY: requireEnv("DO_SPACES_KEY"),
-            DO_SPACES_SECRET: requireEnv("DO_SPACES_SECRET"),
-            DO_SPACES_BUCKET: requireEnv("DO_SPACES_BUCKET"),
+      // S3/Digital Ocean Spaces Configuration
+      DO_SPACES_ENDPOINT: requireUrlEnv("DO_SPACES_ENDPOINT"),
+      DO_SPACES_REGION: requireEnv("DO_SPACES_REGION"),
+      DO_SPACES_KEY: requireEnv("DO_SPACES_KEY"),
+      DO_SPACES_SECRET: requireEnv("DO_SPACES_SECRET"),
+      DO_SPACES_BUCKET: requireEnv("DO_SPACES_BUCKET"),
 
-            // Gemini AI Configuration
-            GEMINI_API_KEY: requireEnv("GEMINI_API_KEY"),
+      // Gemini AI Configuration
+      GEMINI_API_KEY: requireEnv("GEMINI_API_KEY"),
 
-            // Database Configuration
-            DATABASE_URL: requireEnv("DATABASE_URL"),
+      // Database Configuration
+      DATABASE_URL: requireEnv("DATABASE_URL"),
 
-            // Logging Configuration (optional with defaults)
-            LOG_LEVEL: process.env.LOG_LEVEL || undefined,
-            NODE_ENV: (process.env.NODE_ENV as "development" | "production" | "test") || "development",
-        };
+      // Logging Configuration (optional with defaults)
+      LOG_LEVEL: process.env.LOG_LEVEL || undefined,
+      NODE_ENV:
+        (process.env.NODE_ENV as "development" | "production" | "test") ||
+        "development",
+    };
 
-        logger.info("Environment variables validated successfully");
-        return env;
-    } catch (error) {
-        if (error instanceof Error) {
-            logger.fatal({ error: error.message }, "Environment variable validation failed");
-            console.error("\n❌ Environment Variables Validation Failed:");
-            console.error(`\n  ${error.message}\n`);
-            console.error("Please set all required environment variables before starting the worker.\n");
-        }
-        process.exit(1);
+    logger.info("Environment variables validated successfully");
+    return env;
+  } catch (error) {
+    if (error instanceof Error) {
+      logger.fatal(
+        { error: error.message },
+        "Environment variable validation failed"
+      );
+      console.error("\n❌ Environment Variables Validation Failed:");
+      console.error(`\n  ${error.message}\n`);
+      console.error(
+        "Please set all required environment variables before starting the worker.\n"
+      );
     }
+    process.exit(1);
+  }
 }
 
 /**

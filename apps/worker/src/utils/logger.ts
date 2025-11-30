@@ -12,23 +12,23 @@ const logLevel = process.env.LOG_LEVEL || (isDevelopment ? "debug" : "info");
  * - Production: JSON format for log aggregation
  */
 export const logger = pino({
-    level: logLevel,
-    transport: isDevelopment
-        ? {
-            target: "pino-pretty",
-            options: {
-                colorize: true,
-                translateTime: "HH:MM:ss Z",
-                ignore: "pid,hostname",
-            },
-        }
-        : undefined,
-    formatters: {
-        level: (label) => {
-            return { level: label.toUpperCase() };
+  level: logLevel,
+  transport: isDevelopment
+    ? {
+        target: "pino-pretty",
+        options: {
+          colorize: true,
+          translateTime: "HH:MM:ss Z",
+          ignore: "pid,hostname",
         },
+      }
+    : undefined,
+  formatters: {
+    level: (label) => {
+      return { level: label.toUpperCase() };
     },
-    timestamp: pino.stdTimeFunctions.isoTime,
+  },
+  timestamp: pino.stdTimeFunctions.isoTime,
 });
 
 /**
@@ -36,4 +36,3 @@ export const logger = pino({
  * Usage: loggerWithContext.child({ component: 'worker', queue: 'main' })
  */
 export const loggerWithContext = logger;
-
