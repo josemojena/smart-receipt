@@ -7,75 +7,15 @@ import {
   processTicketImage,
   saveTicketToDatabase,
 } from "./services/ticket-processing.service.js";
-
-/**
- * Attempts to lock a ticket processing message atomically
- * Only locks if: status is "pending", lockedAt is null/undefined, and finishedAt is null/undefined
- * @param ticketId - The ticket ID to lock
- * @returns true if lock was acquired, false otherwise
- */
-async function tryLockTicket(ticketId: string): Promise<boolean> {
-  try {
-    const now = new Date();
-
-    // Atomic update: only update if conditions are met
-    const result = await prisma.ticketProcessingMessage.updateMany({
-      where: {
-        id: ticketId,
-        status: "pending",
-        lockedAt: null,
-        finishedAt: null,
-      },
-      data: {
-        status: "processing",
-        lockedAt: now,
-      },
-    });
-
-    // If exactly 1 document was updated, we successfully acquired the lock
-    const lockAcquired = result.count === 1;
-
-    if (lockAcquired) {
-      logger.debug({ ticketId }, "Successfully acquired lock on ticket");
-    } else {
-      logger.warn(
-        { ticketId, updatedCount: result.count },
-        "Failed to acquire lock - ticket may be locked by another worker or already processed"
-      );
-    }
-
-    return lockAcquired;
-  } catch (error) {
-    logger.error({ error, ticketId }, "Error attempting to lock ticket");
-    return false;
-  }
-}
-
-/**
- * Releases the lock on a ticket (sets lockedAt to null)
- * Used when processing fails and we want to allow retry
- */
-async function releaseLock(ticketId: string): Promise<void> {
-  try {
-    await prisma.ticketProcessingMessage.update({
-      where: { id: ticketId },
-      data: { lockedAt: null },
-    });
-    logger.debug({ ticketId }, "Lock released");
-  } catch (error) {
-    logger.error({ error, ticketId }, "Error releasing lock");
-    // Don't throw - lock release failure is not critical
-  }
-}
+import { notifyReceiptReady } from "@repo/core/modules/firebase";
+import { receiptsRepository } from "@repo/core/modules/receipts/repositories";
 
 /**
  * Processes a message from RabbitMQ
  * Downloads the ticket image from S3, processes it with Gemini OCR, and saves to database
- * Implements locking mechanism to prevent multiple workers from processing the same ticket
  */
 export async function processMessage(msg: ConsumeMessage): Promise<void> {
   let ticketId: string | null = null;
-  let lockAcquired = false;
 
   try {
     const content = msg.content.toString();
@@ -168,31 +108,51 @@ export async function processMessage(msg: ConsumeMessage): Promise<void> {
       },
       "Ticket processed and saved to database"
     );
+
+    // If origin is "app", notify Firestore that the receipt is ready
+    if (payload.origin === "app" && saveResult.receiptId) {
+      try {
+        // Get the receipt to obtain userId
+        const receipt = await receiptsRepository.findById(saveResult.receiptId);
+        if (receipt && receipt.userId) {
+          await notifyReceiptReady(saveResult.receiptId, receipt.userId);
+          logger.info(
+            {
+              receiptId: saveResult.receiptId,
+              userId: receipt.userId,
+            },
+            "Notified Firestore that receipt is ready"
+          );
+        } else {
+          logger.warn(
+            {
+              receiptId: saveResult.receiptId,
+            },
+            "Receipt not found or missing userId - skipping Firestore notification"
+          );
+        }
+      } catch (firebaseError) {
+        // Don't fail the entire process if Firestore notification fails
+        logger.error(
+          {
+            error: firebaseError,
+            receiptId: saveResult.receiptId,
+          },
+          "Failed to notify Firestore - receipt was still saved successfully"
+        );
+      }
+    }
   } catch (error) {
     logger.error(
       {
         error,
         ticketId,
-        lockAcquired,
       },
       "Error processing message"
     );
 
-    // If we acquired the lock but processing failed, release it and mark as failed
-    if (lockAcquired && ticketId) {
-      await updateTicketStatus(ticketId, "failed", true);
-      // Optionally release the lock to allow manual retry
-      // For now, we keep the lock to prevent automatic retries of failed tickets
-      // await releaseLock(ticketId);
-    } else if (ticketId && !lockAcquired) {
-      // Lock was not acquired - this is expected if another worker is processing
-      // Don't update status, just log
-      logger.debug(
-        { ticketId },
-        "Skipping status update - lock was not acquired"
-      );
-    } else if (ticketId) {
-      // We have ticket ID but lock status is unknown - try to mark as failed
+    // Try to update status to failed if we have the ticket ID
+    if (ticketId) {
       try {
         await updateTicketStatus(ticketId, "failed", true);
       } catch (updateError) {
@@ -236,16 +196,13 @@ async function updateTicketStatus(
       status: string;
       finishedAt?: Date | null;
       failedAt?: Date | null;
-      lockedAt?: null;
     } = { status };
 
     if (setFinishedAt) {
       if (status === "completed") {
         updateData.finishedAt = new Date();
-        updateData.lockedAt = null; // Release lock when finished
       } else if (status === "failed") {
         updateData.failedAt = new Date();
-        // Keep lockedAt to prevent automatic retries
       }
     }
 

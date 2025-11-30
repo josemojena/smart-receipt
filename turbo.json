@@ -46,7 +46,9 @@
         "WORKER_CONCURRENCY",
         "MAX_RETRIES",
         "RETRY_DELAY_MS",
-        "LOG_LEVEL"
+        "LOG_LEVEL",
+        "FIREBASE_SERVICE_ACCOUNT",
+        "GOOGLE_APPLICATION_CREDENTIALS"
       ]
     }
   }

@@ -21,6 +21,11 @@
             "require": "./src/modules/receipts/index.ts",
             "import": "./src/modules/receipts/index.ts"
         },
+        "./modules/firebase": {
+            "types": "./src/modules/firebase/index.ts",
+            "require": "./src/modules/firebase/index.ts",
+            "import": "./src/modules/firebase/index.ts"
+        },
         "./ai/gemini": {
             "types": "./src/ai/gemini/index.ts",
             "require": "./src/ai/gemini/index.ts",
@@ -39,7 +44,8 @@
     "dependencies": {
         "@google/generative-ai": "^0.24.1",
         "@mistralai/mistralai": "^1.10.0",
-        "@repo/database": "workspace:*"
+        "@repo/database": "workspace:*",
+        "firebase-admin": "^13.6.0"
     },
     "devDependencies": {
         "@repo/eslint-config": "workspace:*",

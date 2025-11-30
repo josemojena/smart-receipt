@@ -10,6 +10,7 @@ import {
   handleFailedMessage,
   requeueToMainQueue,
 } from "./services/dlq.service.js";
+import { initializeFirebaseAdmin } from "@repo/core/modules/firebase";
 
 const RABBITMQ_URL = env.RABBITMQ_URL;
 const QUEUE_NAME = env.QUEUE_NAME;
@@ -281,6 +282,32 @@ async function gracefulShutdown(): Promise<void> {
 async function main(): Promise<void> {
   try {
     // Environment variables are validated at module load time
+
+    // Initialize Firebase Admin if credentials are provided
+    if (env.FIREBASE_SERVICE_ACCOUNT || env.GOOGLE_APPLICATION_CREDENTIALS) {
+      try {
+        // If FIREBASE_SERVICE_ACCOUNT is a JSON string, parse it
+        // Otherwise, use GOOGLE_APPLICATION_CREDENTIALS as file path
+        const serviceAccount = env.FIREBASE_SERVICE_ACCOUNT
+          ? (env.FIREBASE_SERVICE_ACCOUNT.startsWith("{")
+            ? JSON.parse(env.FIREBASE_SERVICE_ACCOUNT)
+            : env.FIREBASE_SERVICE_ACCOUNT)
+          : env.GOOGLE_APPLICATION_CREDENTIALS;
+
+        initializeFirebaseAdmin(serviceAccount);
+        logger.info("Firebase Admin initialized");
+      } catch (error) {
+        logger.warn(
+          { error },
+          "Failed to initialize Firebase Admin - app origin notifications will not work"
+        );
+      }
+    } else {
+      logger.debug(
+        "Firebase credentials not provided - app origin notifications will be skipped"
+      );
+    }
+
     // Setup graceful shutdown
     process.on("SIGINT", gracefulShutdown);
     process.on("SIGTERM", gracefulShutdown);

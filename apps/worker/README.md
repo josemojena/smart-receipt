@@ -74,6 +74,12 @@ GEMINI_API_KEY=your_gemini_api_key                    # Google Gemini API key
 # Database Configuration (REQUIRED)
 DATABASE_URL=mongodb://localhost:27017/smartreceipt   # MongoDB connection string
 
+# Firebase Configuration (OPTIONAL - only needed when origin is "app")
+# Either provide FIREBASE_SERVICE_ACCOUNT (JSON string) or GOOGLE_APPLICATION_CREDENTIALS (file path)
+FIREBASE_SERVICE_ACCOUNT='{"type":"service_account",...}'  # Firebase service account JSON as string
+# OR
+GOOGLE_APPLICATION_CREDENTIALS=/path/to/service-account.json  # Path to Firebase service account JSON file
+
 # Logging Configuration (OPTIONAL - has defaults)
 LOG_LEVEL=info                                        # Log level: trace, debug, info, warn, error, fatal
 NODE_ENV=development                                   # Environment: development or production

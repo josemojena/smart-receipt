@@ -71,6 +71,11 @@ function validateAndCreateEnv() {
       // Database Configuration
       DATABASE_URL: requireEnv("DATABASE_URL"),
 
+      // Firebase Configuration (optional - only needed when origin is "app")
+      // Can be a path to JSON file or JSON string
+      FIREBASE_SERVICE_ACCOUNT: process.env.FIREBASE_SERVICE_ACCOUNT || undefined,
+      GOOGLE_APPLICATION_CREDENTIALS: process.env.GOOGLE_APPLICATION_CREDENTIALS || undefined,
+
       // Logging Configuration (optional with defaults)
       LOG_LEVEL: process.env.LOG_LEVEL || undefined,
       NODE_ENV:
